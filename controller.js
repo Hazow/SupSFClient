@@ -1,7 +1,4 @@
-myApp.controller('customersCtrl', function ($scope,$http) {
-    $scope.show=false;
-    $scope.customers=[];
-    $scope.customerToUpdate=null;
+myApp.controller('loginCtrl', function ($scope,$http) {
 
     $http.get('http://localhost:8080/customer').
         success(function(data, status, headers, config) {
@@ -60,4 +57,13 @@ myApp.controller('customersCtrl', function ($scope,$http) {
 
     $scope.limit=$scope.customers.length;
     $scope.filter='-name';
+});
+
+myApp.controller('MainCtrl', function ($scope,$http) {
+    $scope.online=false;
+    $scope.user=[];
+    $scope.usersOnline=null;
+
+
+
 });
