@@ -19,6 +19,7 @@ myApp.directive("drawingCanvasUser", function(){
                         user.jump();
                     }else if(e.keyCode===82){
                         user.punch();
+                        setTimeout(user.draw("right"),1000);
                     }
                 }
                 /*else if(e.keyCode===113){

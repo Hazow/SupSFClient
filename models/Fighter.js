@@ -12,9 +12,10 @@ function Fighter(canvas) {
     this.friction = 0.98;
     this.stop=false;
     var that=this;
-
+    this.or="right";
 
     this.right = function(){
+
         console.log("oldX: "+that.oldX+"  x: "+that.x);
         that.moving=true;
         if(that.velX < that.speed){
@@ -27,18 +28,17 @@ function Fighter(canvas) {
         if (that.x >= 590) {
             that.stop=true;
             that.x = 590;
-        } else if (that.x <= 5) {
-            that.x = 5;
-            that.stop=true;
         }
-        that.draw();
-        console.log(that.x-that.oldX+" stop:"+that.stop);
+
+        that.draw("right");
+        console.log(that.x+"-"+that.oldX+"="+(that.x-that.oldX)+" stop:"+that.stop);
         if((that.x-that.oldX)<50 && !that.stop){
-            setTimeout(that.right,10);
+            setTimeout(that.right,5);
         }else{
             that.oldX=that.x;
             that.moving=false;
             that.stop=false
+            that.or="right";
         }
 
     };
@@ -52,21 +52,19 @@ function Fighter(canvas) {
         that.velX *= that.friction;
         that.x+=that.velX;
 
-        if (that.x >= 590) {
-            that.stop=true;
-            that.x = 590;
-        } else if (that.x <= 5) {
+        if (that.x <= 5) {
             that.stop=true;
             that.x = 5;
         }
-        that.draw();
-        console.log(that.x-that.oldX+" stop:"+that.stop);
+        that.draw("left");
+        console.log(that.x+"-"+that.oldX+"="+(that.x-that.oldX)+" stop:"+that.stop);
         if((that.x-that.oldX)>-50 && !that.stop){
-            setTimeout(that.left,10);
+            setTimeout(that.left,5);
         }else{
             that.oldX=that.x;
             that.moving=false;
             that.stop=false
+            that.or="left";
         }
 
     };
@@ -76,6 +74,8 @@ function Fighter(canvas) {
     };
 
     this.punch=function(){
+
+        turn=this.or;
         var context = this.canvas.getContext('2d');
         var height = this.canvas.height;
         var width = this.canvas.width;
@@ -103,11 +103,7 @@ function Fighter(canvas) {
             var X=this.x;
         }
 
-
-
-
-
-
+        context.lineWidth = 5;
         context.beginPath();
         context.fillStyle = "#000";
         context.arc(X, heightHead, 30, 0, Math.PI * 2, true); // draw circle for head
@@ -122,11 +118,27 @@ function Fighter(canvas) {
 
         // eyes
         context.beginPath();
-        context.fillStyle = "#fff"; // color
-        context.arc(X-10, 45, 3, 0, Math.PI * 2, true); // draw left eye
-        context.fill();
-        context.arc(X+10, 45, 3, 0, Math.PI * 2, true); // draw right eye
-        context.fill();
+        context.fillStyle = "red"; // color
+
+        if(turn=="right"){
+            context.arc(X+10, heightHead, 3, 0, Math.PI * 2, true); // draw left eye
+            context.fill();
+            context.arc(X+20, heightHead, 3, 0, Math.PI * 2, true); // draw right eye
+            context.fill();
+        }else if(turn=="left"){
+            context.arc(X-10, heightHead, 3, 0, Math.PI * 2, true); // draw left eye
+            context.fill();
+            context.arc(X-20, heightHead, 3, 0, Math.PI * 2, true); // draw right eye
+            context.fill();
+        }else{
+            context.arc(X+10, heightHead, 3, 0, Math.PI * 2, true); // draw left eye
+            context.fill();
+            context.arc(X+20, heightHead, 3, 0, Math.PI * 2, true); // draw right eye
+            context.fill();
+        }
+
+
+
 
         // body
         context.beginPath();
@@ -139,9 +151,37 @@ function Fighter(canvas) {
         context.beginPath();
         context.strokeStyle = "#000"; // blue
         context.moveTo(X, heightHead+30);
-        context.lineTo(X, heightHead+30+50);
-        context.moveTo(X, heightHead+30);
-        context.lineTo(X+50, heightHead+30+50);
+        if(turn=="right"){
+            context.lineTo(X-40, heightHead+50);
+            context.moveTo(X-40, heightHead+48);
+            context.lineTo(X-30, heightHead+100);
+            context.moveTo(X, heightHead+30);
+            context.lineTo(X+200, heightHead+30);
+            /*context.moveTo(X+8, heightHead+100);
+             context.lineTo(X+200, heightHead+60);*/
+            context.fillStyle = "#000";
+            context.fillRect(X+100, (heightHead+30)-50, 100, 100);
+        }else if(turn=="left"){
+            context.lineTo(X+40, heightHead+50);
+            context.moveTo(X+40, heightHead+48);
+            context.lineTo(X+30, heightHead+100);
+            context.moveTo(X, heightHead+30);
+            context.lineTo(X-200, heightHead+30);
+            /*context.moveTo(X+8, heightHead+100);
+             context.lineTo(X+200, heightHead+60);*/
+            context.fillStyle = "#000";
+            context.fillRect(X-200, (heightHead+30)-50, 100, 100);
+        }else{
+            context.lineTo(X-40, heightHead+50);
+            context.moveTo(X-40, heightHead+48);
+            context.lineTo(X-30, heightHead+100);
+            context.moveTo(X, heightHead+30);
+            context.lineTo(X+10, heightHead+100);
+            context.moveTo(X+8, heightHead+100);
+            context.lineTo(X+50, heightHead+60);
+        }
+
+
         context.stroke();
 
         // legs
@@ -152,10 +192,13 @@ function Fighter(canvas) {
         context.moveTo(X, heightHead+30+100);
         context.lineTo(X+50, heightHead+30+200);
         context.stroke();
-    }
 
 
-    this.draw = function() {
+    };
+
+
+    this.draw = function(turn) {
+
         var context = this.canvas.getContext('2d');
         var height = this.canvas.height;
         var width = this.canvas.width;
@@ -187,7 +230,7 @@ function Fighter(canvas) {
 
 
 
-
+        context.lineWidth = 5;
         context.beginPath();
         context.fillStyle = "#000";
         context.arc(X, heightHead, 30, 0, Math.PI * 2, true); // draw circle for head
@@ -202,11 +245,26 @@ function Fighter(canvas) {
 
         // eyes
         context.beginPath();
-        context.fillStyle = "#fff"; // color
-        context.arc(X-10, 45, 3, 0, Math.PI * 2, true); // draw left eye
-        context.fill();
-        context.arc(X+10, 45, 3, 0, Math.PI * 2, true); // draw right eye
-        context.fill();
+        context.fillStyle = "red"; // color
+        if(turn=="right"){
+            context.arc(X+10, heightHead, 3, 0, Math.PI * 2, true); // draw left eye
+            context.fill();
+            context.arc(X+20, heightHead, 3, 0, Math.PI * 2, true); // draw right eye
+            context.fill();
+        }else if(turn=="left"){
+            context.arc(X-10, heightHead, 3, 0, Math.PI * 2, true); // draw left eye
+            context.fill();
+            context.arc(X-20, heightHead, 3, 0, Math.PI * 2, true); // draw right eye
+            context.fill();
+        }else{
+            context.arc(X+10, heightHead, 3, 0, Math.PI * 2, true); // draw left eye
+            context.fill();
+            context.arc(X+20, heightHead, 3, 0, Math.PI * 2, true); // draw right eye
+            context.fill();
+        }
+
+
+
 
         // body
         context.beginPath();
@@ -219,9 +277,33 @@ function Fighter(canvas) {
         context.beginPath();
         context.strokeStyle = "#000"; // blue
         context.moveTo(X, heightHead+30);
-        context.lineTo(X-50, heightHead+30+50);
-        context.moveTo(X, heightHead+30);
-        context.lineTo(X+50, heightHead+30+50);
+        if(turn=="right"){
+            context.lineTo(X-40, heightHead+50);
+            context.moveTo(X-40, heightHead+48);
+            context.lineTo(X-30, heightHead+100);
+            context.moveTo(X, heightHead+30);
+            context.lineTo(X+10, heightHead+100);
+            context.moveTo(X+8, heightHead+100);
+            context.lineTo(X+50, heightHead+60);
+        }else if(turn=="left"){
+            context.lineTo(X+40, heightHead+50);
+            context.moveTo(X+40, heightHead+48);
+            context.lineTo(X+30, heightHead+100);
+            context.moveTo(X, heightHead+30);
+            context.lineTo(X-10, heightHead+100);
+            context.moveTo(X-8, heightHead+100);
+            context.lineTo(X-50, heightHead+60);
+        }else{
+            context.lineTo(X-40, heightHead+50);
+            context.moveTo(X-40, heightHead+48);
+            context.lineTo(X-30, heightHead+100);
+            context.moveTo(X, heightHead+30);
+            context.lineTo(X+10, heightHead+100);
+            context.moveTo(X+8, heightHead+100);
+            context.lineTo(X+50, heightHead+60);
+        }
+
+
         context.stroke();
 
         // legs
