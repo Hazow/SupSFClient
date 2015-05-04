@@ -1,29 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="74ad370f-41dc-4660-8a37-6f317ad58b93" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/imgs/background.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/Fighter.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/Message.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/models/User.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/angular-route.min.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/directive/drawingCanvasBackground.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/directive/drawingCanvasEnemy.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/directive/drawingCanvasUser.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/service/isLogin.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/controllers/loginCtrl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/controllers/mainCtrl.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/service/scrollglue.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/service/users.js" />
-      <change type="DELETED" beforePath="C:\wamp\www\SupSFClient\controller.js" afterPath="" />
-      <change type="DELETED" beforePath="C:\wamp\www\SupSFClient\models.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/partials/login.html" afterPath="$PROJECT_DIR$/partials/login.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/partials/main.html" afterPath="$PROJECT_DIR$/partials/main.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/module.js" afterPath="$PROJECT_DIR$/module.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/style.css" afterPath="$PROJECT_DIR$/style.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="74ad370f-41dc-4660-8a37-6f317ad58b93" name="Default" comment="" />
     <ignored path="SupSFClient.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
