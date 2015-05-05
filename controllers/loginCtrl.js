@@ -2,6 +2,9 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
 
     $scope.dataLoading = false;
     $scope.userToLog=new User();
+    $scope.userToLog.pseudo="Zow";
+    $scope.userToLog.password="zow";
+
     $scope.error=false;
 
     if($rootScope.error){
@@ -47,6 +50,6 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
             }
         });*/
     };
-
+    $scope.login();
 
 });

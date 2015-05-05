@@ -1,13 +1,13 @@
-<div style="float: left;border: 1px solid">
+<div style="border: 1px solid">
     <h1 style="padding:20px;">Arena</h1>
     <span ng-bind="XY"></span>
     <div style="height: 600px;width: 600px;">
-        <canvas id="canvasUser" drawing-canvas-user style="border: 1px dotted;" width="590px" height="590px">
+        <canvas id="canvasUser" drawing-canvas-user style="border: 1px dotted;" width="1200px" height="590px">
 
         </canvas>
     </div>
 </div>
-<div style="float: left; margin-right: 20px;margin-left: 20px;padding: 20px;border: 1px solid">
+<div style=" margin-right: 20px;margin-left: 20px;padding: 20px;border: 1px solid">
     <h1>Chat</h1>
     <div scroll-glue style="height: 580px;width: 500px;overflow: auto;">
         <div ng-repeat="msg in messages">
@@ -23,7 +23,7 @@
 
 
 </div>
-<div style="float: left;padding: 20px;border: 1px solid">
+<div style="padding: 20px;border: 1px solid">
     <h1>Online</h1>
     <div style="height: 600px">
         <div ng-repeat="user in usersOnline">

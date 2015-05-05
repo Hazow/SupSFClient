@@ -6,25 +6,57 @@ myApp.directive("drawingCanvasUser", function(){
             var user = new Fighter(canvas);
             user.draw();
             console.log("endDraw");
+            user.go();
 
             var doc = angular.element(document);
-            doc.on('keydown', function(e) {
+            doc.on('keypress', function(e) {
+
                 console.log(e.keyCode);
                 if(!user.moving){
-                    if (e.keyCode === 68) {
-                        user.right();
-                    }else if(e.keyCode===81){
-                        user.left();
-                    }else if(e.keyCode===90){
-                        user.jump();
+                    if (e.keyCode === 100) {
+                        user.isAccel = true;
+                       /* user.accelerate("right");*/
+                        user.or="right";
+                        user.goAccel=true;
+                    }else if(e.keyCode===113){
+                        user.isAccel = true;
+                        user.or="left";
+                        user.goAccel=true;
+                    }else if(e.keyCode===122){
+                        scope.$emit('changePos', user.isJumping);
+                        if(!user.isJumping){
+                            user.jump();
+                        }
+
                     }else if(e.keyCode===82){
                         user.punch();
-                        setTimeout(user.draw("right"),1000);
+                    }else{
+
                     }
                 }
+            });
+
+            doc.on('keyup', function(e) {
+
+                user.isAccel = false;
+
+                console.log(e.keyCode);
+
+                    if (e.keyCode === 68) {
+                        user.goAccel=false;
+                    }else if(e.keyCode===81){
+                        user.goAccel=false;
+                    }else if(e.keyCode===90){
+                        scope.$emit('changePos', user.isJumping);
+                    }else if(e.keyCode===82){
+
+                    }else{
+
+                    }
+
                 /*else if(e.keyCode===113){
-                    //user.left();
-                }*/
+                 //user.left();
+                 }*/
 
             });
 
