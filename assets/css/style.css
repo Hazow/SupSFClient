@@ -1,0 +1,88 @@
+::-moz-selection { color:#fff; background: #fcb216 ;}
+::selection { color:#fff; background: #fcb216 ;}
+
+:focus{
+    outline-color: #fcb216;
+}
+
+@font-face{
+	font-family: 'Retro Computer';
+	src: url('../font/font.ttf');
+}
+
+body{
+	font-family: 'Retro Computer';
+	width: 1200px;
+	margin: 0 auto;
+	background-color: #000;
+	color: #fff;
+}
+
+h3, h4, label{
+	background: -webkit-gradient(linear, left top, left bottom, from(#f15929), to(#ffd800));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+#content{
+	margin: 0 auto;
+	width: 1200px;
+}
+
+header h1, #logo{
+	margin: 0 auto;
+	width: 727px;
+	height: 363px;
+	background-image: url('../img/logo.png');
+}
+
+.hcenter{
+	text-align: center;
+}
+
+hr{
+	border: none;
+	height: 20px;
+}
+
+input[type="text"], input[type="password"], input[type="email"]{
+	font-family: 'Retro Computer';
+	background: -webkit-gradient(linear, left top, left bottom, from(#f15929), to(#ffd800));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-color: black;
+  	border: solid 1px orange;
+  	padding: 2px;
+  	color: #fcb216;
+}
+
+input[type="submit"], button{
+    cursor: pointer;
+    font-family: 'Retro Computer';
+    background-color: black;
+    color: #fcb216;
+    border: solid 1px orange;
+    padding: 10px;
+    color: #fcb216;
+    width: 100%;
+}
+
+input[type="submit"]:hover, button:hover{
+    background-color: #f15929;
+}
+
+a{
+    color: #fcb216;
+    text-decoration: none;
+}
+
+
+footer{
+    font-size: 12px;
+    width: 800px;
+    margin: 0 auto;
+    border-top:solid 1px #fcb216;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f15929), to(#ffd800));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
