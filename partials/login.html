@@ -1,12 +1,32 @@
+<!--<div ng-show="error">{{error}}</div>-->
+<!--<form name="form" ng-submit="login()" role="form">-->
+        <!--<label for="username">Username</label>-->
+        <!--<input type="text" name="username" id="username" ng-model="userToLog.pseudo" required />-->
+
+        <!--<label for="password">Password</label>-->
+        <!--<input type="password" name="password" id="password" ng-model="userToLog.password" required />-->
+
+
+        <!--<button type="submit" ng-disabled="dataLoading">Login</button>-->
+    <!--<span ng-if="dataLoading">Loading...</span>-->
+<!--</form>-->
+<h3 class='hcenter'>Welcome to Street Fighter</h3>
+<h4 class='hcenter'>Please log in below</h4>
+<hr>
 <div ng-show="error">{{error}}</div>
 <form name="form" ng-submit="login()" role="form">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" ng-model="userToLog.pseudo" required />
-
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" ng-model="userToLog.password" required />
-
-
-        <button type="submit" ng-disabled="dataLoading">Login</button>
-    <span ng-if="dataLoading">Loading...</span>
+    <table style="margin: 0 auto;">
+        <tr>
+            <td><label for="username">Username : </label></td>
+            <td><input type="text" name="username" id="username" ng-model="userToLog.pseudo" required/></td>
+        </tr>
+        <tr>
+            <td><label for="password">Password</label></td>
+            <td><input type="password" name="password" id="password" ng-model="userToLog.password" required/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button type="submit" ng-disabled="dataLoading">Login</button></td>
+        </tr>
+    </table>
 </form>
