@@ -27,7 +27,7 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
             success(function(data, status, headers, config) {
                 // this refers to the scope
                 if(data!=null && !isEmpty(data)){
-                    $rootScope.loggedUser=new User(data.id,data.pseudo,"",data.win,data.lose,data.fights,data.created);
+                    $rootScope.loggedUser=new User(data._id,data.pseudo,"",data.win,data.lose,data.fights,data.created);
                     console.log(data);
                     $location.path('/');
                 }else{

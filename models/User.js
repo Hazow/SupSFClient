@@ -1,5 +1,5 @@
-function User(id, pseudo, password,win,lose,fights,created) {
-    this.id = id;
+function User(_id, pseudo, password,win,lose,fights,created) {
+    this._id = _id;
     this.pseudo = pseudo;
     this.password = password;
     this.win = win;

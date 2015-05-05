@@ -1,6 +1,6 @@
 <div style="border: 1px solid">
     <h1 style="padding:20px;">Arena</h1>
-    <span ng-bind="XY"></span>
+    <span ng-bind="XY"></span><button ng-if="searching!=null" ng-click="stopSearch()">Stop Search</button><button ng-if="searching==null" ng-click="quickFight()">Quick Fight</button><span ng-bind="searching"></span>
     <div style="height: 600px;width: 600px;">
         <canvas id="canvasUser" drawing-canvas-user style="border: 1px dotted;" width="1200px" height="590px">
 

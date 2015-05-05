@@ -1,15 +1,32 @@
 myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
 
+    var socket = io.connect("http://localhost:8080");
+
+
     $scope.user=$rootScope.loggedUser;
     $scope.messages=[];
     $scope.usersOnline=null;
     $scope.newMsg=new Message();
     $scope.XY=100;
+    $scope.searching=null;
+
+    socket.emit("login",$scope.user);
+
 
     $scope.$on('changePos', function(evt, value){
-       $scope.XY=value;
+        $scope.XY=value;
         $scope.$apply();
     });
+
+    $scope.quickFight=function(){
+        $scope.searching="Searching...";
+        socket.emit("searchFight",$scope.user);
+    };
+
+    $scope.stopSearch=function(){
+        $scope.searching=null;
+        socket.emit("stopSearchFight",$scope.user);
+    };
 
     $scope.sendMsg=function(){
         $scope.newMsg.sender=$scope.user.pseudo;
@@ -23,8 +40,15 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
                 });
     };
 
-    var socket = io.connect("http://localhost:8080");
-    socket.emit("login",$scope.user);
+    socket.on('findFight', function (user) {
+        $scope.searching="Fighters found !, You will fight versus "+user.pseudo+" !";
+        $scope.$apply();
+    });
+
+    socket.on('waitingFight', function () {
+        $scope.searching="No fighters found, you are in the waiting list...";
+        $scope.$apply();
+    });
 
     socket.on('message', function (message) {
         $scope.messages.push(message);
@@ -66,61 +90,4 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
         $scope.$apply();
     });
 
-    /*   $http.get('http://localhost:8080/customer').
-     success(function(data, status, headers, config) {
-     $scope.customers.splice(0,$scope.customers.length);
-     data.forEach(function(entry){
-     $scope.customers.push(new Customer(entry._id,entry.firstname,entry.lastname,entry.created,entry.website));
-     });
-     }).
-     error(function(data, status, headers, config) {
-     console.log(data+" / "+status);
-     });
-
-     $scope.pushCustomer = function(customer) {
-     console.log(customer);
-     $http.post('http://localhost:8080/customer', customer).
-     success(function(data, status, headers, config) {
-     // this refers to the scope
-     $scope.customers[$scope.customers.length] = data;
-     $scope.customerToPush = {}; // Reset the current element
-     }).
-     error(function(data, status, headers, config) {
-     console.log(data);
-     });
-     };
-
-     $scope.delCustomer = function(customer){
-     $http.delete('http://localhost:8080/customer/'+customer.id).
-     success(function(data, status, headers, config) {
-     $scope.customers.splice($scope.customers.indexOf(customer),1);
-     }).
-     error(function(data, status, headers, config) {
-     console.log(data);
-     });
-
-     };
-
-     $scope.showUpdate = function(customer){
-     $scope.show=true;
-     $scope.customerToUpdate=customer;
-     };
-
-     $scope.updateCustomer = function(customer){
-     console.log(customer);
-     $http.put('http://localhost:8080/customer', customer).
-     success(function(data, status, headers, config) {
-
-     $scope.customers[$scope.customers.indexOf(customer)]=customer;
-     $scope.show=false;
-     }).
-     error(function(data, status, headers, config) {
-     console.log(data);
-     });
-
-     };
-
-
-     $scope.limit=$scope.customers.length;
-     $scope.filter='-name';*/
 });
