@@ -9,6 +9,10 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
     $scope.newMsg=new Message();
     $scope.XY=100;
     $scope.searching=null;
+    $scope.askingForFight=null;
+    $scope.getAskingForFight=null;
+    $scope.opponent=null;
+    $scope.fighting=false;
 
     socket.emit("login",$scope.user);
 
@@ -22,6 +26,59 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
         $scope.searching="Searching...";
         socket.emit("searchFight",$scope.user);
     };
+
+    $scope.askforFight=function(user){
+        if(user._id!=$scope.user._id){
+            $scope.askingForFight=user;
+            socket.emit("askForFight",user);
+        }else{
+            console.log("You can't fight vs yourself...");
+        }
+
+    };
+
+    $scope.acceptFight=function(){
+        if($scope.opponent){
+            console.log("Accepte fight vs"+$scope.opponent.pseudo);
+            socket.emit("goFight",$scope.opponent);
+            $scope.getAskingForFight=false;
+            $scope.askingForFight=true;
+            $scope.fighting=true;
+        }
+    };
+
+    $scope.declineFight=function(){
+        if($scope.opponent){
+            socket.emit("cancelFight",$scope.opponent);
+            $scope.getAskingForFight=false;
+            $scope.askingForFight=false;
+            $scope.opponent=null;
+            $scope.fighting=false;
+        }
+    };
+
+    socket.on('askForFight', function (user) {
+        $scope.getAskingForFight=true;
+        $scope.askingForFight=true;
+        $scope.opponent=user;
+        console.log(user.pseudo+" want fight against you ! Are you agree ?");
+        $scope.$apply();
+    });
+
+    socket.on('responseForFight', function (data) {
+        console.log(data.opponent.pseudo+" a répondu a votre demande : "+data.res);
+        if(data.res){
+            $scope.opponent=data.opponent;
+            $scope.getAskingForFight=false;
+            $scope.fighting=true;
+        }else{
+            $scope.opponent=null;
+            $scope.getAskingForFight=false;
+            $scope.askingForFight=false;
+            $scope.fighting=false;
+        }
+        $scope.$apply();
+    });
 
     $scope.stopSearch=function(){
         $scope.searching=null;
@@ -42,6 +99,8 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
 
     socket.on('findFight', function (user) {
         $scope.searching="Fighters found !, You will fight versus "+user.pseudo+" !";
+        $scope.fighting=true;
+        $scope.opponent=user;
         $scope.$apply();
     });
 
