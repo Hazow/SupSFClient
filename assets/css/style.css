@@ -24,6 +24,19 @@ h3, h4, label{
 	-webkit-text-fill-color: transparent;
 }
 
+.error p{
+    background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), to(rgba(252, 6, 6, 0.38)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    border: solid 1px darkred;
+    width: 60%;
+    margin: 0 auto;
+    padding: 5px;
+}
+
+
+
 #content{
 	margin: 0 auto;
 	width: 1200px;
@@ -31,9 +44,12 @@ h3, h4, label{
 
 header h1, #logo{
 	margin: 0 auto;
-	width: 727px;
-	height: 363px;
-	background-image: url('../img/logo.png');
+	width: 400px;
+	height: 200px;
+	background-image: url('../img/logo.jpg');
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    background-size: cover;
 }
 
 .hcenter{

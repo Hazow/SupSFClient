@@ -1,6 +1,6 @@
 myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
 
-    var socket = io.connect("http://localhost:8080");
+    var socket = io.connect("http://37.59.122.17");
 
 
     $scope.user=$rootScope.loggedUser;
@@ -66,7 +66,7 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
     });
 
     socket.on('responseForFight', function (data) {
-        console.log(data.opponent.pseudo+" a répondu a votre demande : "+data.res);
+        console.log(data.opponent.pseudo+" a rï¿½pondu a votre demande : "+data.res);
         if(data.res){
             $scope.opponent=data.opponent;
             $scope.getAskingForFight=false;
@@ -87,7 +87,7 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location) {
 
     $scope.sendMsg=function(){
         $scope.newMsg.sender=$scope.user.pseudo;
-            $http.post('http://localhost:8080/msg', $scope.newMsg).
+            $http.post('http://37.59.122.17/msg', $scope.newMsg).
                 success(function(data, status, headers, config) {
                     socket.emit('message',$scope.newMsg);
                     $scope.newMsg=new Message();

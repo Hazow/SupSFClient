@@ -2,28 +2,25 @@
     <h3 class='hcenter'>Welcome to Street Fighter</h3>
     <h4 class='hcenter'>Please log in below</h4>
     <hr>
-    <!--<div ng-show="error">{{error}}</div>-->
+    <div class="error" ng-show="error"><p style="">{{error}}</p><hr></div>
+
     <form name="form" ng-submit="register()" role="form">
         <table style="margin: 0 auto;">
             <tr>
-                <td><label>Login : </label></td>
-                <td><input type="text" name="login"/></td>
-            </tr>
-            <tr>
-                <td><label>Email : </label></td>
-                <td><input type="email" name="email"/></td>
+                <td><label>Username : </label></td>
+                <td><input type="text" name="login" ng-model="userToRegister.pseudo"/></td>
             </tr>
             <tr>
                 <td><label>Password : </label></td>
-                <td><input type="password" name="password"/></td>
+                <td><input type="password" name="password" ng-model="userToRegister.password"/></td>
             </tr>
             <tr>
                 <td><label>Repeat password : </label></td>
-                <td><input type="password" name="passwordRepeat"/></td>
+                <td><input type="password" name="passwordRepeat" ng-model="validPassword"/></td>
             </tr>
             <tr>
                 <td><button ng-click="toLogin()">Login</button></td>
-                <td><input type="submit" name="submit" value="Register"/></td>
+                <td><button type="submit" ng-disabled="dataLoading">Register</button></td>
             </tr>
         </table>
     </form>
