@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', ['ngRoute','luegg.directives']);
+var myApp = angular.module('myApp', ['ngRoute','luegg.directives','ngAudio']);
 
 myApp.config(['$routeProvider', function($routeProvider) {
 
