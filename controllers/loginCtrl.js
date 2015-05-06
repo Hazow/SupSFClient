@@ -31,7 +31,7 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
                     console.log(data);
                     $location.path('/');
                 }else{
-                    $scope.error="Identifiant incorrect";
+                    $scope.error="Invalid Username";
                     $scope.dataLoading = false;
                 }
 
