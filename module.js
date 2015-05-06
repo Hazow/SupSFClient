@@ -12,6 +12,11 @@ myApp.config(['$routeProvider', function($routeProvider) {
             controller: 'loginCtrl',
             publicAccess: true
         })
+        .when('/register', {
+            templateUrl: 'partials/register.html',
+            controller: 'registerCtrl',
+            publicAccess: true
+        })
         .otherwise({
             redirectTo: '/'
         });
@@ -23,7 +28,7 @@ myApp.run( function($rootScope, $location) {
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
         if ( $rootScope.loggedUser == null ) {
             // no logged user, we should be going to #login
-            if ( next.templateUrl == "partials/login.html" ) {
+            if ( next.templateUrl == "partials/login.html" || next.templateUrl == "partials/register.html") {
                 // already going to #login, no redirect needed
             } else {
                 // not going to #login, we should redirect now

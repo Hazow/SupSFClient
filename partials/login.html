@@ -13,7 +13,7 @@
 <h3 class='hcenter'>Welcome to Street Fighter</h3>
 <h4 class='hcenter'>Please log in below</h4>
 <hr>
-<div ng-show="error">{{error}}</div>
+<div ng-show="error" class="error"><p>{{error}}</p><hr></div>
 <form name="form" ng-submit="login()" role="form">
     <table style="margin: 0 auto;">
         <tr>
@@ -21,11 +21,11 @@
             <td><input type="text" name="username" id="username" ng-model="userToLog.pseudo" required/></td>
         </tr>
         <tr>
-            <td><label for="password">Password</label></td>
+            <td><label for="password">Password : </label></td>
             <td><input type="password" name="password" id="password" ng-model="userToLog.password" required/></td>
         </tr>
         <tr>
-            <td></td>
+            <td><button ng-click="toRegister()">Register</button></td>
             <td><button type="submit" ng-disabled="dataLoading">Login</button></td>
         </tr>
     </table>

@@ -23,7 +23,7 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
     $scope.login = function () {
         $scope.dataLoading = true;
 
-        $http.post('http://localhost:8080/isLogin', $scope.userToLog).
+        $http.post('http://37.59.122.17/isLogin', $scope.userToLog).
             success(function(data, status, headers, config) {
                 // this refers to the scope
                 if(data!=null && !isEmpty(data)){
@@ -31,7 +31,7 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
                     console.log(data);
                     $location.path('/');
                 }else{
-                    $scope.error="Identifiant incorrect";
+                    $scope.error="Invalid Username";
                     $scope.dataLoading = false;
                 }
 
@@ -41,15 +41,19 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
             });
 
         /*AuthenticationService.Login($scope.username, $scope.password, function(response) {
-            if(response.success) {
-                AuthenticationService.SetCredentials($scope.username, $scope.password);
-                $location.path('/');
-            } else {
-                $scope.error = response.message;
-                $scope.dataLoading = false;
-            }
-        });*/
+         if(response.success) {
+         AuthenticationService.SetCredentials($scope.username, $scope.password);
+         $location.path('/');
+         } else {
+         $scope.error = response.message;
+         $scope.dataLoading = false;
+         }
+         });*/
     };
     //$scope.login();
+
+    $scope.toRegister = function () {
+        $location.path('/register');
+    };
 
 });
