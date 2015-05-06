@@ -1,35 +1,64 @@
-<div style="border: 1px solid;background: #fff; color: blue;">
-    <h1 style="padding:20px;">Arena</h1>
-    <span ng-bind="XY"></span><button ng-if="searching!=null" ng-click="stopSearch()">Stop Search</button><button ng-if="searching==null" ng-click="quickFight()">Quick Fight</button><span ng-bind="searching"></span>
-    <div style="height: 600px;width: 600px;"><span ng-show="opponent">Your opponent : {{opponent.pseudo}} - {{opponent.win}} Win - {{opponent.lose}} Lose </span>
-        <canvas id="canvasUser" drawing-canvas-user style="border: 1px dotted;" width="1200px" height="590px">
+<div style="width: 100%" ng-if="getAskingForFight">
+    <hr>
+    <div style="width: 100%; text-align: center">
+        {{opponent.pseudo}} want fight against you !
+    </div>
+    <hr>
+    <div style="width: 49%; display: inline-block"><button style="width: 100%" ng-click="acceptFight()">Accept</button></div>
+    <div style="width: 49%; display: inline-block"><button style="width: 100%" ng-click="declineFight()">Decline</button></div>
+    <hr>
+</div>
+
+
+<div style="width: 100%; border-bottom: solid 1px #fcb216;">
+    <div style="display: inline-block; width: 60%">
+        <h3 style="text-align: center">Chat</h3>
+        <div scroll-glue style="height: 580px;width: 100%;overflow: auto;">
+            <div ng-repeat="msg in messages">
+                {{msg.sender}} : {{msg.body}}
+            </div>
+        </div>
+        <div style="width: 100%"><br/></div>
+        <div style="width: 100%">
+            <form role="form" ng-submit="sendMsg()">
+                <input ng-model="newMsg.body" type="text" required/>
+                <div style="width: 100%"><br/></div>
+                <input type="submit" value="Send"/>
+            </form>
+        </div>
+    </div>
+
+    <div style="display: inline-block; width: 30%; float: right">
+        <h3 style="text-align: center">Online players</h3>
+        <div scroll-glue style="height: 600px; width:100%; overflow: auto;" >
+            <div ng-repeat="user in usersOnline">
+                <div style="width: 100%; padding-top: 5px">
+                    <span style="">{{user.pseudo}}</span>
+                    <button style="float: right; width: auto !important; " ng-show="!askingForFight" ng-click="askforFight(user)">Ask for fight</button>
+                </div>
+                <div style="width: 100%;"><br></div>
+            </div>
+        </div>
+    </div>
+    <hr>
+</div>
+
+<div>
+    <h3 style="text-align: center">Arena</h3>
+    <span ng-bind="XY"></span>
+        <button ng-if="searching!=null" ng-click="stopSearch()">Stop Search</button>
+        <button ng-if="searching==null" ng-click="quickFight()">Quick Fight</button>
+        <hr>
+        <span ng-bind="searching"></span>
+    <hr>
+    <div style="height: 600px;width: 600px;">
+        <span ng-show="opponent">
+            Your opponent : {{opponent.pseudo}} - {{opponent.win}} Win - {{opponent.lose}} Lose
+        </span>
+        <hr>
+        <canvas id="canvasUser" drawing-canvas-user width="1200px" height="590px">
 
         </canvas>
     </div>
 </div>
-<div style="float:left;" ng-if="getAskingForFight">{{opponent.pseudo}} want fight against you ! <button ng-click="acceptFight()">Accept</button><button ng-click="declineFight()">Decline</button></div>
-<div style=" margin-right: 20px;margin-left: 20px;padding: 20px;border: 1px solid">
-    <h1>Chat</h1>
-    <div scroll-glue style="height: 580px;width: 500px;overflow: auto;">
-        <div ng-repeat="msg in messages">
-            {{msg.sender}} : {{msg.body}}
-        </div>
-    </div>
-    <div style="height: 20px;">
-        <form role="form" ng-submit="sendMsg()">
-            <input ng-model="newMsg.body" type="text" required/>
-            <input type="submit" value="Send"/>
-        </form>
-    </div>
-
-
-</div>
-<div style="padding: 20px;border: 1px solid">
-    <h1>Online</h1>
-    <div style="height: 600px">
-        <div ng-repeat="user in usersOnline">
-            {{user.pseudo}} <button ng-show="!askingForFight" ng-click="askforFight(user)">Ask for fight</button> <br>
-        </div>
-    </div>
-
-</div>
+<hr>
