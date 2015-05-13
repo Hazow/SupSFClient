@@ -25,7 +25,7 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope,$local
     $scope.login = function () {
         $scope.dataLoading = true;
 
-        $http.post('http://localhost:8080/isLogin', $scope.userToLog).
+        $http.post($rootScope.ip+'/isLogin', $scope.userToLog).
             success(function(data, status, headers, config) {
                 // this refers to the scope
                 if(data!=null && !isEmpty(data)){

@@ -1,5 +1,6 @@
 function Fighter(canvas) {
     this.life = 100;
+    this.damageDone = 0;
     this.canvas = canvas;
     this.context= canvas.getContext('2d');
     this.contextOpponent = null ;
@@ -9,6 +10,7 @@ function Fighter(canvas) {
     this.y=0;
     this.velY=0;
     this.moving=false;
+    this.isProtecting=false;
     this.velX = 0;
     this.speed = 5;
     this.friction = 0.98;
@@ -185,6 +187,7 @@ function Fighter(canvas) {
         }
 
         that.status = "protect"
+        that.isProtecting=true;
         that.draw(that.or);
     };
 
@@ -827,14 +830,14 @@ function Fighter(canvas) {
 
         //cible
 
-        context.moveTo(900, 50);
+       /* context.moveTo(900, 50);
         context.lineTo(900, 500);
         context.moveTo(900, 500);
         context.lineTo(950, 500);
         context.moveTo(950, 50);
         context.lineTo(950, 500);
 
-        context.stroke();
+        context.stroke();*/
 
 
         context.lineCap = 'round';
@@ -951,7 +954,20 @@ function Fighter(canvas) {
                     console.log("hit");
 
                     that.isHurting = true;
-                    that.life-=20;
+
+
+                    switch (that.status){
+                        case "punch":
+                            that.damageDone=5;
+                            break;
+                        case "kick":
+                            that.damageDone=7;
+                            break;
+                        case "special":
+                            that.damageDone=10;
+                            break;
+                    }
+
                     context.beginPath();
                     context.strokeStyle = 'rgba(255,0,0,0.7)';
                     context.fillStyle = '#ff0000';
@@ -975,7 +991,7 @@ function Fighter(canvas) {
                 if(colorYmax!=0){
                     console.log("hit");
                     that.isHurting = true;
-                    that.life-=20;
+                    that.damageDone+=20;
                     context.beginPath();
                     context.strokeStyle = 'rgba(255,0,0,0.7)';
                     context.fillStyle = '#ff0000';

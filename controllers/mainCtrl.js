@@ -1,6 +1,6 @@
 myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio,$localStorage) {
 
-    var socket = io.connect("http://localhost:8080/");
+    var socket = io.connect($rootScope.ip);
 
     $scope.sound = ngAudio.load("sound/9BH.wav"); // returns NgAudioObject
     $scope.user=$rootScope.loggedUser;
@@ -19,10 +19,11 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
     $scope.myFighter=null;
     $scope.posBase=null;
     $scope.stopFight=null;
+    $scope.result=null;
 
     socket.emit("login",$scope.user);
 
-    $http.get('http://localhost:8080/user').
+    $http.get($rootScope.ip+'/user').
         success(function(data, status, headers, config) {
             $scope.users=data;
         }).
@@ -77,14 +78,75 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
         $scope.$apply();
     });
 
+    $scope.$watch('myFighter.damageDone', function(newValue, oldValue) {
+        console.log(newValue);
+        if(newValue>0){
+            if($scope.opponentFighter && $scope.myFighter.damageDone){
+                if($scope.opponentFighter.isProtecting){
+                    if($scope.opponentFighter.or=="right" && $scope.myFighter.or=="left"){
+                        if(($scope.opponentFighter.position=="" && $scope.myFighter.status=="punch") || ($scope.opponentFighter.position=="crouch" && $scope.myFighter.status=="kick") || ($scope.opponentFighter.position=="crouch" && ($scope.myFighter.position=="crouch" && $scope.myFighter.status=="punch"))){
+
+                        }else {
+                            $scope.opponentFighter.life-=newValue;
+                        }
+                    }else if($scope.opponentFighter.or=="left" && $scope.myFighter.or=="right"){
+                        if(($scope.opponentFighter.position=="" && $scope.myFighter.status=="punch") || ($scope.opponentFighter.position=="crouch" && $scope.myFighter.status=="kick") || ($scope.opponentFighter.position=="crouch" && ($scope.myFighter.position=="crouch" && $scope.myFighter.status=="punch"))){
+
+                        }else {
+                            $scope.opponentFighter.life-=newValue;
+                        }
+                    }else{
+                        $scope.opponentFighter.life-=(newValue);
+                    }
+                }else{
+                    $scope.opponentFighter.life-=(newValue);
+                }
+
+            }
+            $scope.myFighter.damageDone=0;
+        }
+
+
+    });
+
+    $scope.$watch('opponentFighter.damageDone', function(newValue, oldValue) {
+        console.log(newValue);
+        if(newValue>0){
+            if($scope.myFighter && $scope.opponentFighter.damageDone){
+                if($scope.myFighter.isProtecting){
+                    if($scope.myFighter.or=="right" && $scope.opponentFighter.or=="left"){
+                        if(($scope.myFighter.position=="" && $scope.opponentFighter.status=="punch") || ($scope.myFighter.position=="crouch" && $scope.opponentFighter.status=="kick")|| ($scope.myFighter.position=="crouch" && ($scope.opponentFighter.position=="crouch" && $scope.opponentFighter.status=="punch"))){
+
+                        }else {
+                            $scope.myFighter.life-=(newValue);
+                        }
+                    }else if($scope.myFighter.or=="left" && $scope.opponentFighter.or=="right"){
+                        if(($scope.myFighter.position=="" && $scope.opponentFighter.status=="punch") || ($scope.myFighter.position=="crouch" && $scope.opponentFighter.status=="kick")|| ($scope.myFighter.position=="crouch" && ($scope.opponentFighter.position=="crouch" && $scope.opponentFighter.status=="punch"))){
+
+                        }else {
+                            $scope.myFighter.life-=(newValue);
+                        }
+                    }else{
+                        $scope.myFighter.life-=(newValue);
+                    }
+                }else{
+                    $scope.myFighter.life-=(newValue);
+                }
+
+            }
+            $scope.opponentFighter.damageDone=0;
+        }
+
+    });
+
     $scope.$watch('myFighter.life', function(newValue, oldValue) {
-        if(newValue==0){
+        if(newValue<=0){
             $scope.fighting=false;
 
             $scope.user.lose++;
             $scope.user.fights.push({results: 0,versus: $scope.opponent});
             console.log($scope.user);
-            $http.put('http://localhost:8080/user', $scope.user).
+            $http.put($rootScope.ip+'/user', $scope.user).
                 success(function(data, status, headers, config) {
                     console.log(data);
                 }).
@@ -93,6 +155,7 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
                 });
             $scope.newMsg.sender="Console";
             $scope.newMsg.body=$scope.opponent.pseudo+" win versus "+$scope.user.pseudo;
+            $scope.result="LOSE !";
             socket.emit('message',$scope.newMsg);
             $scope.newMsg=null;
             $scope.opponent=null;
@@ -102,19 +165,19 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
     });
 
     $scope.$watch('opponentFighter.life', function(newValue, oldValue) {
-        if(newValue==0){
+        if(newValue<=0){
             $scope.fighting=false;
 
             $scope.user.win++;
             $scope.user.fights.push({results: 1,versus: $scope.opponent});
-            $http.put('http://localhost:8080/user', $scope.user).
+            $http.put($rootScope.ip+'/user', $scope.user).
                 success(function(data, status, headers, config) {
                     console.log(data);
                 }).
                 error(function(data, status, headers, config) {
                     console.log(data);
                 });
-
+            $scope.result="WIN !";
             $scope.opponent=null;
             $scope.searching=null;
             socket.emit('majLeaderBoard',$scope.user);
@@ -199,6 +262,7 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
                 $scope.opponentFighter.frame=0;
                 $scope.opponentFighter.status = "";
                 $scope.opponentFighter.isHurting = false;
+                $scope.opponentFighter.isProtecting=false;
                 $scope.opponentFighter.resetCombat();
                 $scope.opponentFighter.draw();
                 break;
@@ -329,7 +393,7 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
     /**************************************************************** CHAT *********************************************/
     $scope.sendMsg=function(){
         $scope.newMsg.sender=$scope.user.pseudo;
-        $http.post('http://localhost:8080/msg', $scope.newMsg).
+        $http.post($rootScope.ip+'/msg', $scope.newMsg).
             success(function(data, status, headers, config) {
                 socket.emit('message',$scope.newMsg);
                 $scope.newMsg=new Message();
@@ -399,8 +463,8 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
             if(entry._id==user._id){
                 $scope.usersOnline.splice($scope.usersOnline.indexOf(entry),1);
                 if($scope.opponent._id==user._id){
-                    $scope.messages.push(new Message(null,"Console","Your opponent has quit the fight !"));
-                    $scope.opponentFighter.life=0;
+                  /*  $scope.messages.push(new Message(null,"Console","Your opponent has quit the fight !"));
+                    $scope.opponentFighter.life=0;*/
                 }
             }
         });
