@@ -146,25 +146,6 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
             socket.emit("event", { opponent:$scope.opponent, event:value });
     });
 
-    /*socket.on('event', function (value) {
-        console.log(value);
-        switch(value){
-            case "right":
-            case"left":
-                $scope.myFighter.isAccel = true;
-                $scope.myFighter.or=value;
-                $scope.myFighter.goAccel=true;
-                break;
-            case "stop":
-                $scope.myFighter.isAccel=false;
-                $scope.myFighter.frame=0;
-                $scope.myFighter.goAccel=false;
-                $scope.myFighter.isHurting = false;
-                break;
-        }
-        $scope.$apply();
-    });*/
-
     socket.on('eventOpponent', function (value) {
 
         if($scope.myFighter.contextOpponent==null){
@@ -218,6 +199,7 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
                 $scope.opponentFighter.frame=0;
                 $scope.opponentFighter.status = "";
                 $scope.opponentFighter.isHurting = false;
+                $scope.opponentFighter.resetCombat();
                 $scope.opponentFighter.draw();
                 break;
             case "endSpecial":
@@ -414,8 +396,12 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
 
     socket.on('disconnectUserOnline', function (user) {
         $scope.usersOnline.forEach(function(entry){
-            if(entry.pseudo==user.pseudo){
+            if(entry._id==user._id){
                 $scope.usersOnline.splice($scope.usersOnline.indexOf(entry),1);
+                if($scope.opponent._id==user._id){
+                    $scope.messages.push(new Message(null,"Console","Your opponent has quit the fight !"));
+                    $scope.opponentFighter.life=0;
+                }
             }
         });
         $scope.$apply();

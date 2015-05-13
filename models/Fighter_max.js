@@ -1,8 +1,6 @@
 function Fighter(canvas) {
-    this.life = 100;
+    this.life = false;
     this.canvas = canvas;
-    this.context= canvas.getContext('2d');
-    this.contextOpponent = null ;
     this.x=0;
     this.oldX=0;
     this.oldY=0;
@@ -30,7 +28,9 @@ function Fighter(canvas) {
     this.lastPosX = ["","","","",""];         // tableau des positions en x
 
 
+
     this.go=function(){
+
         if(that.goAccel){
             that.accelerate(that.or);
         }else{
@@ -41,7 +41,7 @@ function Fighter(canvas) {
 
     this.accelerate=function(or){
 
-
+        
 
         if((that.position == "crouch" || that.status != "")&& that.position!="jump"){
             that.immobile();
@@ -76,17 +76,18 @@ function Fighter(canvas) {
 
     this.descelerate=function(){
         if(that.accel!=0){
-            if(that.or=="right"){
 
-                if(this.accel>10){
-                    this.accel=10;
-                }
+            if(that.or=="right"){
 
                 if(that.isAccel) {
                     return;
                 }
+               
                 that.accel-=0.5;
+                
                 that.x+=that.accel;
+
+
             }else if(that.or=="left"){
 
                 if(this.accel<-10){
@@ -97,7 +98,9 @@ function Fighter(canvas) {
                 if(that.isAccel){
                     return;
                 }
+
                 that.accel+=0.5;
+
                 that.x+=that.accel;
             }
 
@@ -169,21 +172,26 @@ function Fighter(canvas) {
 
 
         that.status = "special";
+        
+
         that.y = 380;
+        
+
         if(that.specialload<15){
             that.specialload++;
         }
-
+        
         that.draw(that.or);
     };
 
     this.protect=function(){
 
+        console.log(that.y);
 
         if(that.y == 380){
             that.standup();
         }
-
+        
         that.status = "protect"
         that.draw(that.or);
     };
@@ -222,6 +230,7 @@ function Fighter(canvas) {
 
 
     this.draw = function(turn,opp) {
+
         if(turn){
             that.or=turn;
         }else{
@@ -269,13 +278,13 @@ function Fighter(canvas) {
             that.x=that.canvas.width;
         }
 
-
+        
 
         context.lineWidth = mainlinewidth;
         context.beginPath();
         context.fillStyle = maincolor;
         context.arc(X, heightHead, 30, 0, Math.PI * 2, true); // draw circle for head
-
+        
         context.fill();
 
 
@@ -310,7 +319,7 @@ function Fighter(canvas) {
         // ARMS
         if(this.status==""){
             if(turn=="right"){
-
+                
 
                 context.moveTo(X, heightHead+30);
                 context.lineTo(X-40, heightHead+50);
@@ -826,15 +835,17 @@ function Fighter(canvas) {
         }
 
         //cible
+        
+ //console.log(that.accel);
 
-        context.moveTo(900, 50);
-        context.lineTo(900, 500);
-        context.moveTo(900, 500);
-        context.lineTo(950, 500);
-        context.moveTo(950, 50);
-        context.lineTo(950, 500);
+         context.moveTo(900, 50);
+         context.lineTo(900, 500);
+         context.moveTo(900, 500);
+         context.lineTo(950, 500);
+         context.moveTo(950, 50);
+         context.lineTo(950, 500);
 
-        context.stroke();
+         context.stroke();
 
 
         context.lineCap = 'round';
@@ -842,16 +853,18 @@ function Fighter(canvas) {
         if(that.status == "" || that.isHurting || (that.status == "special" && that.specialload<10 || that.status == "special" && that.specialload>14)){
 
         }else{
-            if(that.contextOpponent){
-                that.combat(that.contextOpponent);
-            }
+            that.combat(context);
         }
+        
+
 
     };
 
 
 
-    this.combat=function(context){
+
+
+    this.combat=function(context){       
 
         if(that.x <= (that.lastPosX[4]+30) && that.or == "right"){
            // console.log(1);
@@ -874,10 +887,10 @@ function Fighter(canvas) {
         }
 
         that.lastPosX[4] = that.x;
-
+        
         //  --------
-
-
+        
+       
 
         var minX= that.x+50;
         var maxX= that.x+50;
@@ -889,9 +902,9 @@ function Fighter(canvas) {
         var colorYmin = "";
 
         var gradient = context.createLinearGradient(100,0,100,100);
-        gradient.addColorStop(0,"red");     // DÈpart
-        gradient.addColorStop(0.5,"yellow"); // IntermÈdiaire
-        gradient.addColorStop(1,"white");    // ArrivÈe
+        gradient.addColorStop(0,"red");     // D√©part
+        gradient.addColorStop(0.5,"yellow"); // Interm√©diaire
+        gradient.addColorStop(1,"white");    // Arriv√©e
 
 
 
@@ -900,7 +913,7 @@ function Fighter(canvas) {
             case "punch":
                 if(that.or == "right"){maxX = that.x+130; minX = that.x+60;}
                 else{maxX = that.x-60; minX = that.x-130;}
-
+                
                 maxY = minY = that.y+40;
 
                 break;
@@ -908,14 +921,14 @@ function Fighter(canvas) {
             case "kick":
                 if(that.or == "right"){maxX = that.x+110;minX =that.x+60;}
                 else{maxX = that.x-60;minX =that.x-110;}
-
+                
                 maxY = minY = that.y+30+80;
                 break;
 
             case "special":
                 if(that.or == "right"){maxX = that.canvas.width;minX = that.x+200;}
                 else{maxX = that.x-118; minX = 0;}
-
+                
                 maxY = minY = that.y+35;
                 break;
         }
@@ -926,32 +939,33 @@ function Fighter(canvas) {
 
 
         //limit body 
-        /*  context.beginPath();
-         context.strokeStyle = 'rgba(255, 0, 255, 0.7)';
-         context.moveTo(minX, minY);
-         context.lineTo(maxX, maxY);
-         */
+        /*context.beginPath();
+        context.strokeStyle = 'rgba(255, 0, 255, 0.7)';
+        context.moveTo(minX, minY);
+        context.lineTo(maxX, maxY);
+        */
 
         context.stroke(); // DESSINE
 
-
-
+        
+        
 
         if(that.or == "right"){
             for(var i = minX; i<maxX; i++){
-
+    
                 if(that.status == "" || that.isHurting || (that.status == "special" && that.specialload<10 || that.status == "special" && that.specialload>14)){return;}
-
+    
                 colorYmax = context.getImageData(i, maxY+7, 1, 1).data[1];
-
-                //console.log(colorYmax);
-
-
+    
+                
+    
+    
                 if(colorYmax!=0){
-                    console.log("hit");
 
+                    console.log('Touch√©');
+                    
                     that.isHurting = true;
-                    that.life-=20;
+
                     context.beginPath();
                     context.strokeStyle = 'rgba(255,0,0,0.7)';
                     context.fillStyle = '#ff0000';
@@ -966,16 +980,16 @@ function Fighter(canvas) {
 
         if(that.or == "left"){
             for(var i = maxX; i>minX; i--){
-
+    
                 if(that.status == "" || that.isHurting || (that.status == "special" && that.specialload<10 || that.status == "special" && that.specialload>14)){return;}
-
+    
                 colorYmax = context.getImageData(i, maxY+7, 1, 1).data[1];
-
-
+    
+               
                 if(colorYmax!=0){
-                    console.log("hit");
+                    console.log('Touch√©');
                     that.isHurting = true;
-                    that.life-=20;
+
                     context.beginPath();
                     context.strokeStyle = 'rgba(255,0,0,0.7)';
                     context.fillStyle = '#ff0000';
@@ -991,7 +1005,7 @@ function Fighter(canvas) {
 
 
 
-
+        
     };
 
 
