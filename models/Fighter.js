@@ -1,6 +1,8 @@
 function Fighter(canvas) {
-    this.life = false;
+    this.life = 100;
     this.canvas = canvas;
+    this.context= canvas.getContext('2d');
+    this.contextOpponent = null ;
     this.x=0;
     this.oldX=0;
     this.oldY=0;
@@ -793,9 +795,9 @@ function Fighter(canvas) {
 
         context.lineCap = 'round';
 
-
-        that.combat(context);
-
+        if(that.contextOpponent){
+            that.combat(that.contextOpponent);
+        }
 
     };
 
@@ -876,10 +878,11 @@ function Fighter(canvas) {
                 //console.log(colorYmax);
 
 
-                if(colorYmax!=0 || that.isHurting){
+                if(colorYmax!=0){
+                    console.log("hit");
 
                     that.isHurting = true;
-
+                    that.life-=20;
                     context.beginPath();
                     context.strokeStyle = 'rgba(255,0,0,0.7)';
                     context.fillStyle = '#ff0000';
@@ -900,10 +903,10 @@ function Fighter(canvas) {
                 colorYmax = context.getImageData(i, maxY+7, 1, 1).data[1];
 
 
-                if(colorYmax!=0 || that.isHurting){
-
+                if(colorYmax!=0){
+                    console.log("hit");
                     that.isHurting = true;
-
+                    that.life-=20;
                     context.beginPath();
                     context.strokeStyle = 'rgba(255,0,0,0.7)';
                     context.fillStyle = '#ff0000';

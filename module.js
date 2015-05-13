@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', ['ngRoute','luegg.directives','ngAudio']);
+var myApp = angular.module('myApp', ['ngRoute','luegg.directives','ngAudio','ngStorage']);
 
 myApp.config(['$routeProvider', function($routeProvider) {
 
@@ -22,7 +22,7 @@ myApp.config(['$routeProvider', function($routeProvider) {
         });
 }]);
 
-myApp.run( function($rootScope, $location) {
+myApp.run( function($rootScope, $location,$localStorage) {
 
     // register listener to watch route changes
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
@@ -32,7 +32,12 @@ myApp.run( function($rootScope, $location) {
                 // already going to #login, no redirect needed
             } else {
                 // not going to #login, we should redirect now
-                $location.path( "/login" );
+                if($localStorage.user){
+                    $rootScope.loggedUser=$localStorage.user;
+                }else{
+                    $location.path( "/login" );
+                }
+
             }
         }
     });

@@ -1,10 +1,11 @@
-myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio) {
+myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio,$localStorage) {
 
     var socket = io.connect("http://localhost:8080/");
 
     $scope.sound = ngAudio.load("sound/9BH.wav"); // returns NgAudioObject
-
     $scope.user=$rootScope.loggedUser;
+    $scope.users=null;
+    $scope.leaderBoard=false;
     $scope.messages=[];
     $scope.usersOnline=null;
     $scope.newMsg=new Message();
@@ -21,6 +22,13 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
 
     socket.emit("login",$scope.user);
 
+    $http.get('http://localhost:8080/user').
+        success(function(data, status, headers, config) {
+            $scope.users=data;
+        }).
+        error(function(data, status, headers, config) {
+            console.log(data);
+        });
 
     $scope.$on('changePos', function(evt, value){
         $scope.XY=value;
@@ -47,6 +55,12 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
         console.log("Fin Opponent");
     });
 
+    $scope.unlog=function(){
+        $localStorage.user=null;
+        $rootScope.loggedUser=null;
+        socket.disconnect();
+        $location.path('/login');
+    };
     /**************************************** AFTER FIGHT *************************************/
 
     $scope.quitFight = function(){
@@ -63,17 +77,159 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
         $scope.$apply();
     });
 
-    /*************************************** FIGH **************************************************/
-    $scope.$on('moving', function(evt, value){
-        if(value=="right"){
-            socket.emit("moveRight",$scope.opponent);
-        }else{
-            socket.emit("moveLeft",$scope.opponent);
+    $scope.$watch('myFighter.life', function(newValue, oldValue) {
+        if(newValue==0){
+            $scope.fighting=false;
+
+            $scope.user.lose++;
+            $scope.user.fights.push({results: 0,versus: $scope.opponent});
+            console.log($scope.user);
+            $http.put('http://localhost:8080/user', $scope.user).
+                success(function(data, status, headers, config) {
+                    console.log(data);
+                }).
+                error(function(data, status, headers, config) {
+                    console.log(data);
+                });
+            $scope.newMsg.sender="Console";
+            $scope.newMsg.body=$scope.opponent.pseudo+" win versus "+$scope.user.pseudo;
+            socket.emit('message',$scope.newMsg);
+            $scope.newMsg=null;
+            $scope.opponent=null;
+            $scope.searching=null;
+            socket.emit('majLeaderBoard',$scope.user);
         }
     });
 
-    $scope.$on('stopMoving', function(evt, value){
-        socket.emit("stopMoving",$scope.opponent);
+    $scope.$watch('opponentFighter.life', function(newValue, oldValue) {
+        if(newValue==0){
+            $scope.fighting=false;
+
+            $scope.user.win++;
+            $scope.user.fights.push({results: 1,versus: $scope.opponent});
+            $http.put('http://localhost:8080/user', $scope.user).
+                success(function(data, status, headers, config) {
+                    console.log(data);
+                }).
+                error(function(data, status, headers, config) {
+                    console.log(data);
+                });
+
+            $scope.opponent=null;
+            $scope.searching=null;
+            socket.emit('majLeaderBoard',$scope.user);
+        }
+    });
+
+    /*************************************** FIGH **************************************************/
+
+    $scope.$watch('myFighter.accel', function(newValue, oldValue) {
+        if(newValue==0){
+            console.log("Accel null");
+            socket.emit("correctLatency",{
+                opponent : $scope.opponent,
+                x:$scope.myFighter.x,
+                y:$scope.myFighter.y,
+                status:$scope.myFighter.status,
+                position:$scope.myFighter.position,
+                specialload:$scope.myFighter.specialload,
+                or:$scope.myFighter.or,
+                frame:$scope.myFighter.frame,
+                life:$scope.myFighter.life,
+                isHurting : $scope.myFighter.isHurting
+            });
+        }
+
+    });
+
+    $scope.$on('event', function(evt, value){
+            socket.emit("event", { opponent:$scope.opponent, event:value });
+    });
+
+    /*socket.on('event', function (value) {
+        console.log(value);
+        switch(value){
+            case "right":
+            case"left":
+                $scope.myFighter.isAccel = true;
+                $scope.myFighter.or=value;
+                $scope.myFighter.goAccel=true;
+                break;
+            case "stop":
+                $scope.myFighter.isAccel=false;
+                $scope.myFighter.frame=0;
+                $scope.myFighter.goAccel=false;
+                $scope.myFighter.isHurting = false;
+                break;
+        }
+        $scope.$apply();
+    });*/
+
+    socket.on('eventOpponent', function (value) {
+
+        if($scope.myFighter.contextOpponent==null){
+            $scope.myFighter.contextOpponent=$scope.opponentFighter.context;
+        }
+        if($scope.opponentFighter.contextOpponent==null){
+            $scope.opponentFighter.contextOpponent=$scope.myFighter.context;
+        }
+
+        console.log(value);
+        switch(value){
+            case "right":
+            case"left":
+                $scope.opponentFighter.isAccel = true;
+                $scope.opponentFighter.or=value;
+                $scope.opponentFighter.goAccel=true;
+                break;
+            case "stop":
+                $scope.opponentFighter.isAccel=false;
+                $scope.opponentFighter.frame=0;
+                $scope.opponentFighter.goAccel=false;
+                $scope.opponentFighter.isHurting = false;
+                break;
+            case "jump":
+                $scope.opponentFighter.jump();
+                break;
+            case "punch":
+                $scope.opponentFighter.punch();
+                break;
+            case "crouch":
+                $scope.opponentFighter.crouch();
+                break;
+            case "kick":
+                $scope.opponentFighter.kick();
+                break;
+            case "protect":
+                $scope.opponentFighter.protect();
+                break;
+            case "kamehameha":
+                $scope.opponentFighter.kamehameha();
+                break;
+            case "endCrouch":
+                $scope.opponentFighter.isAccel = false;
+                $scope.opponentFighter.frame=0;
+                $scope.opponentFighter.isHurting = false;
+                $scope.opponentFighter.standup();
+                $scope.opponentFighter.position = "";
+                break;
+            case "endStatus":
+                $scope.opponentFighter.isAccel = false;
+                $scope.opponentFighter.frame=0;
+                $scope.opponentFighter.status = "";
+                $scope.opponentFighter.isHurting = false;
+                $scope.opponentFighter.draw();
+                break;
+            case "endSpecial":
+                $scope.opponentFighter.isAccel = false;
+                $scope.opponentFighter.frame=0;
+                $scope.opponentFighter.status = "";
+                $scope.opponentFighter.standup();
+                $scope.opponentFighter.specialload = 0;
+                $scope.opponentFighter.isHurting = false;
+                break;
+        }
+        $scope.$apply();
     });
 
     $scope.$on('correctLatency', function(evt, value){
@@ -104,20 +260,6 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
         $scope.opponentFighter.specialload=value.specialload;
         $scope.opponentFighter.isHurting=value.isHurting;
         $scope.opponentFighter.draw();
-        $scope.$apply();
-    });
-
-    socket.on('opponentMove', function (value) {
-        $scope.opponentFighter.isAccel = true;
-        $scope.opponentFighter.or=value;
-        $scope.opponentFighter.goAccel=true;
-        $scope.$apply();
-    });
-
-    socket.on('opponentStopMove', function (value) {
-        $scope.opponentFighter.isAccel=false;
-        $scope.opponentFighter.frame=0;
-        $scope.opponentFighter.goAccel=false;
         $scope.$apply();
     });
 
@@ -225,8 +367,23 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
         $scope.messages.push(message);
         $scope.$apply();
     });
-    /************************************************************** OTHER ************************************************/
 
+    /************************************************************** LEADERBOARD ******************************************/
+
+    socket.on('majLeaderBoard',function(user){
+        console.log("majLeaderBoard");
+        $scope.users.forEach(function(entry){
+           if(entry._id==user._id){
+               $scope.users[$scope.users.indexOf(entry)]=user;
+               console.log("found");
+           }
+        });
+        $scope.$apply();
+    });
+
+
+
+    /************************************************************** OTHER ************************************************/
     socket.on('alreadyOnline', function (user) {
         console.log("alreadyOnline");
         $rootScope.loggedUser=null;

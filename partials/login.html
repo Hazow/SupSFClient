@@ -14,6 +14,7 @@
 <h4 class='hcenter'>Please log in below</h4>
 <hr>
 <div ng-show="error" class="error"><p>{{error}}</p><hr></div>
+<div ng-show="$storage"><p>{{$storage.user.pseudo}}</p><hr></div>
 <form name="form" ng-submit="login()" role="form">
     <table style="margin: 0 auto;">
         <tr>
@@ -23,6 +24,10 @@
         <tr>
             <td><label for="password">Password : </label></td>
             <td><input type="password" name="password" id="password" ng-model="userToLog.password" required/></td>
+        </tr>
+        <tr>
+            <td><label for="saveMe">Se souvenir de moi </label></td>
+            <td><input type="checkbox" name="saveMe" id="saveMe" ng-model="saveMe"/></td>
         </tr>
         <tr>
             <td><button ng-click="toRegister()">Register</button></td>
