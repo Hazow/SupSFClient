@@ -97,6 +97,7 @@ myApp.directive("drawingCanvasUser", function(){
                     user.resetCombat();
                 }else if(e.keyCode===69){   //end protect
                     scope.$emit('event', "endStatus");
+                    user.isProtecting=false;
                     user.status = "";
                     user.isHurting = false;
                 }else if(e.keyCode===70){  //end kick

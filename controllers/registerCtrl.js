@@ -26,7 +26,7 @@ myApp.controller('registerCtrl', function ($scope,$location,$http,$rootScope) {
         $scope.dataLoading = true;
 
         if($scope.userToRegister.password == $scope.validPassword){
-            $http.post('http:/localhost:8080/user', $scope.userToRegister).
+            $http.post($rootScope.ip+'/user', $scope.userToRegister).
                 success(function(data, status, headers, config) {
                     console.log(data);
                     // this refers to the scope

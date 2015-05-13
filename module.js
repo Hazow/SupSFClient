@@ -23,7 +23,7 @@ myApp.config(['$routeProvider', function($routeProvider) {
 }]);
 
 myApp.run( function($rootScope, $location,$localStorage) {
-
+    $rootScope.ip="http://10.19.17.198:8080";
     // register listener to watch route changes
     $rootScope.$on( "$routeChangeStart", function(event, next, current) {
         if ( $rootScope.loggedUser == null ) {
