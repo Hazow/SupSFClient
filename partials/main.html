@@ -20,7 +20,6 @@
     </div>
 
     <div style="display: inline-block; width: 100%">
-        <!--<h3 class="bordered" style="text-align: center;cursor: pointer;" ng-click="leaderBoard=!leaderBoard">LeaderBoard</h3>-->
         <div ng-show="leaderBoard" style="max-height: 580px;width: 100%;overflow: auto;">
             <hr>
             <table  style="width:100%; text-align: center; border-collapse: collapse">
@@ -74,18 +73,6 @@
 <div ng-if="fighting">
     <hr>
     <h3 style="text-align: center">Arena</h3>
-    <!--<div ng-if="getAskingForFight">-->
-        <!--<hr>-->
-        <!--<div style="width: 100%; text-align: center">-->
-            <!--{{opponent.pseudo}} want fight against you !-->
-        <!--</div>-->
-        <!--<hr>-->
-
-        <!--<hr>-->
-    <!--</div>-->
-        <!--<button ng-if="searching!=null" ng-click="stopSearch()">Stop Search</button>-->
-        <!--<button ng-if="searching==null" ng-click="quickFight()">Quick Fight</button>-->
-        <!--<span ng-bind="searching"></span>-->
         <div ng-show="fighting" style="width: 100%"><div ng-click="quitFight()" class="error pointer">Quit fight</div></div>
         <span ng-show="stopFight">Your opponent has quit the fight <button ng-click="stopFight=null">OK</button></span>
     <hr>
