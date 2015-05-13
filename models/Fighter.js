@@ -7,8 +7,8 @@ function Fighter(canvas) {
     this.y=0;
     this.velY=0;
     this.moving=false;
-    this.velX = 0,
-    this.speed = 5,
+    this.velX = 0;
+    this.speed = 5;
     this.friction = 0.98;
     this.stop=false;
     var that=this;
@@ -23,11 +23,15 @@ function Fighter(canvas) {
     this.frame = 0;
     this.position = "";  // crouch, "", jump
     this.status = "";  // punch, "", kick, special, protect
+    this.specialload = 0;
+    this.isHurting = false;
 
 
 
     this.go=function(){
         if(that.goAccel){
+
+
             that.accelerate(that.or);
         }else{
             that.descelerate();
@@ -63,12 +67,21 @@ function Fighter(canvas) {
     this.descelerate=function(){
         if(that.accel!=0){
             if(that.or=="right"){
+
+                if(this.accel>10){
+                    this.accel=10;
+                }
+
                 if(that.isAccel) {
                     return;
                 }
                 that.accel-=0.5;
                 that.x+=that.accel;
             }else if(that.or=="left"){
+
+                if(this.accel<-10){
+                    this.accel=-10;
+                }
 
                 if(that.isAccel){
                     return;
@@ -83,7 +96,7 @@ function Fighter(canvas) {
     };
 
     this.jump = function(){
-        that.isJumping=true;
+        that.position="jump";
 
         that.velY = 0.981 * -(that.y/10);
         that.y += that.velY;
@@ -113,7 +126,7 @@ function Fighter(canvas) {
             setTimeout(that.jumpDown, 1);
         }else{
             that.oldY=that.y;
-            that.isJumping=false;
+            that.position="";
         }
     };
 
@@ -125,7 +138,20 @@ function Fighter(canvas) {
 
     this.kick=function(){
 
+        if(that.position=="crouch"){return;}
         that.status = "kick"
+        that.draw(that.or);
+    };
+
+    this.kamehameha=function(){
+        if(that.position=="crouch"){return;}
+
+        that.status = "special";
+        that.y = 380;
+        if(that.specialload<15){
+            that.specialload++;
+        }
+
         that.draw(that.or);
     };
 
@@ -137,6 +163,8 @@ function Fighter(canvas) {
 
     this.crouch=function(){
 
+        if(that.position!="" || that.status != "" || that.status == "special"){return;}
+        this.accel = 0;
         that.position = "crouch";
         that.y = 440;
         that.draw(that.or);
@@ -157,9 +185,14 @@ function Fighter(canvas) {
         var height = that.canvas.height;
         var width = that.canvas.width;
 
+        var maincolor = "#d3d3d3";
+        var eyescolor = "#e50000";
+
+        var mainlinewidth = 12;
+
         context.clearRect(0,0,that.canvas.width,that.canvas.height);
-       // console.log("Canvas height : "+height);
-       // console.log("Canvas width : "+width);
+        // console.log("Canvas height : "+height);
+        // console.log("Canvas width : "+width);
 
         var long=200;
         var larg=100;
@@ -171,7 +204,6 @@ function Fighter(canvas) {
         }else{
             var heightHead=that.y;
         }
-        console.log("X : "+this.x+", opp : "+opp);
         if(this.x==0){
             if(opp){
                 var X=width - 100;
@@ -184,19 +216,26 @@ function Fighter(canvas) {
             var X=that.x;
         }
 
-        //console.log(this.frame);
+        if(that.x>that.canvas.width){
+            that.x=1;
+        }
+        if(that.x<0){
+            that.x=that.canvas.width;
+        }
 
-        context.lineWidth = 5;
+
+
+        context.lineWidth = mainlinewidth;
         context.beginPath();
-        context.fillStyle = "#000";
+        context.fillStyle = maincolor;
         context.arc(X, heightHead, 30, 0, Math.PI * 2, true); // draw circle for head
-        
+
         context.fill();
 
 
         // eyes
         context.beginPath();
-        context.fillStyle = "red"; // color
+        context.fillStyle = eyescolor; // color
         if(turn=="right"){
             context.arc(X+10, heightHead, 3, 0, Math.PI * 2, true); // draw left eye
             context.fill();
@@ -215,17 +254,18 @@ function Fighter(canvas) {
         }
 
 
-
-
         // body
         context.beginPath();
+        context.strokeStyle = maincolor;
         context.moveTo(X, heightHead+30);
         context.lineTo(X, (heightHead+30)+100);
+        context.stroke();
 
         // ARMS
         if(this.status==""){
             if(turn=="right"){
-    
+
+
                 context.moveTo(X, heightHead+30);
                 context.lineTo(X-40, heightHead+50);
                 context.moveTo(X-40, heightHead+48);
@@ -234,9 +274,9 @@ function Fighter(canvas) {
                 context.lineTo(X+10, heightHead+100);
                 context.moveTo(X+8, heightHead+100);
                 context.lineTo(X+50, heightHead+60);
-    
+
             }
-    
+
             if(turn=="left"){
                 context.moveTo(X, heightHead+30);
                 context.lineTo(X+40, heightHead+50);
@@ -247,112 +287,214 @@ function Fighter(canvas) {
                 context.moveTo(X-8, heightHead+100);
                 context.lineTo(X-50, heightHead+60);
             }
+            context.stroke();
         }
         if(this.status=="punch"){
-                
-                if(turn=="left"){
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X+60, heightHead+35);
+            if(turn=="left"){
 
-                    context.moveTo(X+60, heightHead+35);
-                    context.lineTo(X+20, heightHead+60);
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X+60, heightHead+35);
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X-60, heightHead+40);
+                context.moveTo(X+60, heightHead+35);
+                context.lineTo(X+20, heightHead+60);
 
-                    context.moveTo(X-60, heightHead+40);
-                    context.lineTo(X-130, heightHead+40);
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X-60, heightHead+40);
 
-                    
+                context.moveTo(X-60, heightHead+40);
+                context.lineTo(X-130, heightHead+40);
 
-                }
-                if(turn=="right"){
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X-60, heightHead+35);
 
-                    context.moveTo(X-60, heightHead+35);
-                    context.lineTo(X-20, heightHead+60);
+            }
+            if(turn=="right"){
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X+60, heightHead+40);
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X-60, heightHead+35);
 
-                    context.moveTo(X+60, heightHead+40);
-                    context.lineTo(X+130, heightHead+40);
-                    
+                context.moveTo(X-60, heightHead+35);
+                context.lineTo(X-20, heightHead+60);
 
-                }
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X+60, heightHead+40);
+
+                context.moveTo(X+60, heightHead+40);
+                context.lineTo(X+130, heightHead+40);
+
+
+            }
+            context.stroke();
         }
 
-         if(this.status=="kick"){
-                
-                if(turn=="left"){
-                     context.moveTo(X, heightHead+30);
-                    context.lineTo(X+20, heightHead+100);
+        if(this.status=="kick"){
 
-                    context.moveTo(X+20, heightHead+100);
-                    context.lineTo(X-30, heightHead+80);
+            if(turn=="left"){
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X+20, heightHead+100);
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X-20, heightHead+70);
+                context.moveTo(X+20, heightHead+100);
+                context.lineTo(X-30, heightHead+80);
 
-                    context.moveTo(X-20, heightHead+70);
-                    context.lineTo(X-50, heightHead+20);
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X-20, heightHead+70);
 
+                context.moveTo(X-20, heightHead+70);
+                context.lineTo(X-50, heightHead+20);
+
+            }
+            if(turn=="right"){
+
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X-20, heightHead+100);
+
+                context.moveTo(X-20, heightHead+100);
+                context.lineTo(X+30, heightHead+80);
+
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X+20, heightHead+70);
+
+                context.moveTo(X+20, heightHead+70);
+                context.lineTo(X+50, heightHead+20);
+            }
+            context.stroke();
+        }
+
+        if(this.status=="special"){
+
+            if(turn=="left"){
+
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X-30, heightHead+30);
+
+                context.moveTo(X-30, heightHead+30);
+                context.lineTo(X-63, heightHead+30);
+
+                context.moveTo(X-63, heightHead+30);
+                context.lineTo(X-65, heightHead+18);
+
+
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X-20, heightHead+70);
+
+                context.moveTo(X-20, heightHead+70);
+                context.lineTo(X-63, heightHead+35);
+
+                context.moveTo(X-63, heightHead+35);
+                context.lineTo(X-65, heightHead+47);
+                context.stroke();
+
+
+                context.beginPath();
+                context.strokeStyle = 'rgba(40, 72, 232, 0.5)';
+                context.fillStyle = 'rgba(40, 72, 232, '+that.specialload+')';
+                context.lineWidth = 0;
+
+                if(that.specialload>1 && that.specialload<15){
+                    if(that.specialload<9){
+                        context.arc(that.x-90, that.y+30, that.specialload*2, 0, Math.PI * 2, true);
+                    }else{
+                        context.arc(that.x-90, that.y+30, 8*2, 0, Math.PI * 2, true);
+                    }
+
+                    if(that.specialload>9){
+                        context.lineWidth = 20;
+                        context.moveTo(that.x-90, that.y+30);
+                        context.lineTo(that.x-90*(that.specialload*that.specialload), that.y+30);
+                    }
                 }
-                if(turn=="right"){
+                context.fill();
+                context.stroke();
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X-20, heightHead+100);
+                context.beginPath();
+                context.strokeStyle = maincolor;
+                context.lineWidth = mainlinewidth;
 
-                    context.moveTo(X-20, heightHead+100);
-                    context.lineTo(X+30, heightHead+80);
+            }
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X+20, heightHead+70);
+            if(turn=="right"){
 
-                    context.moveTo(X+20, heightHead+70);
-                    context.lineTo(X+50, heightHead+20);
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X+30, heightHead+30);
+
+                context.moveTo(X+30, heightHead+30);
+                context.lineTo(X+63, heightHead+30);
+
+                context.moveTo(X+63, heightHead+30);
+                context.lineTo(X+65, heightHead+18);
+
+
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X+20, heightHead+70);
+
+                context.moveTo(X+20, heightHead+70);
+                context.lineTo(X+63, heightHead+35);
+
+                context.moveTo(X+63, heightHead+35);
+                context.lineTo(X+65, heightHead+47);
+                context.stroke();
+
+
+                context.beginPath();
+                context.strokeStyle = 'rgba(40, 72, 232, 0.5)';
+                context.fillStyle = 'rgba(40, 72, 232, '+that.specialload+')';
+                context.lineWidth = 0;
+                if(that.specialload>1 && that.specialload<15){
+                    if(that.specialload<9){
+                        context.arc(that.x+90, that.y+30, that.specialload*2, 0, Math.PI * 2, true);
+                    }else{
+                        context.arc(that.x+90, that.y+30, 8*2, 0, Math.PI * 2, true);
+                    }
+
+                    if(that.specialload>9){
+                        context.lineWidth = 20;
+                        context.moveTo(that.x+90, that.y+30);
+                        context.lineTo(that.x+90*(that.specialload*that.specialload), that.y+30);
+                    }
                 }
+                context.fill();
+                context.stroke();
+
+                context.beginPath();
+                context.strokeStyle = maincolor;
+                context.lineWidth = mainlinewidth;
+            }
         }
 
         if(this.status=="protect"){
-                
-                if(turn=="left"){
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X-20, heightHead+100);
+            if(turn=="left"){
 
-                    context.moveTo(X-20, heightHead+100);
-                    context.lineTo(X-60, heightHead+60);
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X-20, heightHead+100);
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X-60, heightHead+35);
+                context.moveTo(X-20, heightHead+100);
+                context.lineTo(X-60, heightHead+60);
 
-                    context.moveTo(X-60, heightHead+35);
-                    context.lineTo(X-60, heightHead-20);
-                   
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X-60, heightHead+35);
 
-                    
+                context.moveTo(X-60, heightHead+35);
+                context.lineTo(X-60, heightHead-20);
 
-                }
-                if(turn=="right"){
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X+20, heightHead+100);
+            }
+            if(turn=="right"){
 
-                    context.moveTo(X+20, heightHead+100);
-                    context.lineTo(X+60, heightHead+60);
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X+20, heightHead+100);
 
-                    context.moveTo(X, heightHead+30);
-                    context.lineTo(X+60, heightHead+35);
+                context.moveTo(X+20, heightHead+100);
+                context.lineTo(X+60, heightHead+60);
 
-                    context.moveTo(X+60, heightHead+35);
-                    context.lineTo(X+60, heightHead-20);
-                    
+                context.moveTo(X, heightHead+30);
+                context.lineTo(X+60, heightHead+35);
 
-                }
+                context.moveTo(X+60, heightHead+35);
+                context.lineTo(X+60, heightHead-20);
+
+
+            }
         }
 
 
@@ -361,19 +503,19 @@ function Fighter(canvas) {
 
 
         // LEGS
-        if(turn=="right" && this.position=="" && this.status!="kick"){
+        if(turn=="right" && (this.position==""||this.position=="jump") && this.status!="kick"  && this.status!="special" ){
 
-            
+
             if(this.frame==0){
-                
-              
+
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-50, heightHead+30+200);
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+50, heightHead+30+200);
 
-            
+                context.stroke();
             }
 
             if(this.frame<20 && this.frame>0){
@@ -385,79 +527,80 @@ function Fighter(canvas) {
                 context.moveTo(X-40, heightHead+30+150);    // jambe droite bas
                 context.lineTo(X-80, heightHead+30+150);
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+50, heightHead+30+100);  // jambe gauche haut
 
                 context.moveTo(X+50, heightHead+30+100);  // jambe gauche bas
                 context.lineTo(X+50, heightHead+30+175);
-              
+                context.stroke();
 
             }
             if(this.frame<40 && this.frame>=20){
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-10, heightHead+30+150);
 
                 context.moveTo(X-10, heightHead+30+150);
                 context.lineTo(X-50, heightHead+30+130);
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+25, heightHead+30+150);
                 context.moveTo(X+25, heightHead+30+150);
                 context.lineTo(X+25, heightHead+30+200);
-             
-                
+                context.stroke();
+
 
             }
-             if(this.frame<60 && this.frame>=40){
-                
+            if(this.frame<60 && this.frame>=40){
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+50, heightHead+30+125);
 
                 context.moveTo(X+50, heightHead+30+125);
                 context.lineTo(X+30, heightHead+30+150);
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+5, heightHead+30+150);
                 context.moveTo(X+5, heightHead+30+150);
                 context.lineTo(X-10, heightHead+30+200);
-             
+                context.stroke();
+
             }
             if(this.frame<80 && this.frame>=60){
                 this.frame = 0;
             }
-            
-             
-           
 
-            
+
+
+
+
 
         }
-        if(turn=="left" && this.position=="" && this.status!="kick"){
+        if(turn=="left" && (this.position==""||this.position=="jump") && this.status!="kick" && this.status!="special" ){
 
 
 
             if(this.frame==0){
-                
-              
+
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-50, heightHead+30+200);
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+50, heightHead+30+200);
- 
+                context.stroke();
 
-                
+
 
             }
 
             if(this.frame<20 && this.frame>0){
 
                 // legs
-                
+
 
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+40, heightHead+30+150);    // jambe droite haut
@@ -465,50 +608,51 @@ function Fighter(canvas) {
                 context.moveTo(X+40, heightHead+30+150);    // jambe droite bas
                 context.lineTo(X+80, heightHead+30+150);
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-50, heightHead+30+100);  // jambe gauche haut
 
                 context.moveTo(X-50, heightHead+30+100);  // jambe gauche bas
                 context.lineTo(X-50, heightHead+30+175);
-                
+                context.stroke();
 
             }
             if(this.frame<40 && this.frame>=20){
 
-    
-                
+
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+10, heightHead+30+150);
 
                 context.moveTo(X+10, heightHead+30+150);
                 context.lineTo(X+50, heightHead+30+130);
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-25, heightHead+30+150);
                 context.moveTo(X-25, heightHead+30+150);
                 context.lineTo(X-25, heightHead+30+200);
-           
-                
+                context.stroke();
+
 
             }
-             if(this.frame<60 && this.frame>=40){
+            if(this.frame<60 && this.frame>=40){
 
-                
-                
+
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-50, heightHead+30+125);
 
                 context.moveTo(X-50, heightHead+30+125);
                 context.lineTo(X-30, heightHead+30+150);
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-5, heightHead+30+150);
                 context.moveTo(X-5, heightHead+30+150);
                 context.lineTo(X+10, heightHead+30+200);
-                
+                context.stroke();
+
             }
             if(this.frame<80 && this.frame>=60){
                 this.frame = 0;
@@ -519,60 +663,104 @@ function Fighter(canvas) {
         }
 
         if(this.position=="crouch"){
-                
-                if(turn=="left"){
 
-                    context.moveTo(X, heightHead+30+100);
-                    context.lineTo(X+40, heightHead+30+115);    // jambe droite haut
-    
-                    context.moveTo(X+40, heightHead+30+115);    // jambe droite bas
-                    context.lineTo(X+80, heightHead+30+115);
-    
-                    
-                    context.moveTo(X, heightHead+30+100);
-                    context.lineTo(X-50, heightHead+30+70);  // jambe gauche haut
-    
-                    context.moveTo(X-50, heightHead+30+70);  // jambe gauche bas
-                    context.lineTo(X-50, heightHead+30+115);
+            if(turn=="left"){
 
-                }
-                if(turn=="right"){
+                context.moveTo(X, heightHead+30+100);
+                context.lineTo(X+40, heightHead+30+115);    // jambe droite haut
 
-                    context.moveTo(X, heightHead+30+100);
-                    context.lineTo(X-40, heightHead+30+115);    // jambe droite haut
-    
-                    context.moveTo(X-40, heightHead+30+115);    // jambe droite bas
-                    context.lineTo(X-80, heightHead+30+115);
-    
-                    
-                    context.moveTo(X, heightHead+30+100);
-                    context.lineTo(X+50, heightHead+30+70);  // jambe gauche haut
-    
-                    context.moveTo(X+50, heightHead+30+70);  // jambe gauche bas
-                    context.lineTo(X+50, heightHead+30+115);
+                context.moveTo(X+40, heightHead+30+115);    // jambe droite bas
+                context.lineTo(X+80, heightHead+30+115);
 
-                }
-                
+
+                context.moveTo(X, heightHead+30+100);
+                context.lineTo(X-50, heightHead+30+70);  // jambe gauche haut
+
+                context.moveTo(X-50, heightHead+30+70);  // jambe gauche bas
+                context.lineTo(X-50, heightHead+30+115);
+                context.stroke();
+
+            }
+            if(turn=="right"){
+
+                context.moveTo(X, heightHead+30+100);
+                context.lineTo(X-40, heightHead+30+115);    // jambe droite haut
+
+                context.moveTo(X-40, heightHead+30+115);    // jambe droite bas
+                context.lineTo(X-80, heightHead+30+115);
+
+
+                context.moveTo(X, heightHead+30+100);
+                context.lineTo(X+50, heightHead+30+70);  // jambe gauche haut
+
+                context.moveTo(X+50, heightHead+30+70);  // jambe gauche bas
+                context.lineTo(X+50, heightHead+30+115);
+                context.stroke();
+
+            }
+
+        }
+
+        if(this.status=="special"){
+
+            if(turn=="left"){
+
+                context.moveTo(X, heightHead+30+100);
+                context.lineTo(X+50, heightHead+30+120);  // jambe gauche haut
+
+                context.moveTo(X+50, heightHead+30+120);  // jambe gauche bas
+                context.lineTo(X+63, heightHead+30+160);
+
+
+                context.moveTo(X, heightHead+30+100);
+                context.lineTo(X-50, heightHead+30+120);  // jambe gauche haut
+
+                context.moveTo(X-50, heightHead+30+120);  // jambe gauche bas
+                context.lineTo(X-63, heightHead+30+160);
+                context.stroke();
+
+
+
+            }
+            if(turn=="right"){
+
+                context.moveTo(X, heightHead+30+100);
+                context.lineTo(X-50, heightHead+30+120);  // jambe gauche haut
+
+                context.moveTo(X-50, heightHead+30+120);  // jambe gauche bas
+                context.lineTo(X-63, heightHead+30+160);
+
+
+                context.moveTo(X, heightHead+30+100);
+                context.lineTo(X+50, heightHead+30+120);  // jambe gauche haut
+
+                context.moveTo(X+50, heightHead+30+120);  // jambe gauche bas
+                context.lineTo(X+63, heightHead+30+160);
+                context.stroke();
+
+            }
+
         }
 
         if(this.status=="kick"){
-                
-                if(turn=="left"){
 
-                   context.moveTo(X, heightHead+30+100);
+            if(turn=="left"){
+
+                context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-50, heightHead+30+80);
 
                 context.moveTo(X-50, heightHead+30+80);
                 context.lineTo(X-110, heightHead+30+80);
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X-8, heightHead+30+150);
                 context.moveTo(X-8, heightHead+30+150);
                 context.lineTo(X, heightHead+30+200);
+                context.stroke();
 
-                }
-                if(turn=="right"){
+            }
+            if(turn=="right"){
 
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+50, heightHead+30+80);
@@ -580,19 +768,156 @@ function Fighter(canvas) {
                 context.moveTo(X+50, heightHead+30+80);
                 context.lineTo(X+110, heightHead+30+80);
 
-                
+
                 context.moveTo(X, heightHead+30+100);
                 context.lineTo(X+8, heightHead+30+150);
                 context.moveTo(X+8, heightHead+30+150);
                 context.lineTo(X, heightHead+30+200);
+                context.stroke();
 
-                }
-                
+            }
+
         }
 
-        
+        //cible
+
+        context.moveTo(900, 50);
+        context.lineTo(900, 500);
+        context.moveTo(900, 500);
+        context.lineTo(950, 500);
+        context.moveTo(950, 50);
+        context.lineTo(950, 500);
+
+        context.stroke();
+
+
+        context.lineCap = 'round';
+
+
+        that.combat(context);
+
+
+    };
+
+
+
+    this.combat=function(context){
+
+        // console.log("calcCombat");
+
+
+        that.isCalculC = true;
+
+        var minX= that.x+50;
+        var maxX= that.x+50;
+
+        var minY= that.y+30;
+        var maxY= that.y+30+200;
+
+        var colorYmax = "";
+        var colorYmin = "";
+
+        var gradient = context.createLinearGradient(100,0,100,100);
+        gradient.addColorStop(0,"red");     // Départ
+        gradient.addColorStop(0.5,"yellow"); // Intermédiaire
+        gradient.addColorStop(1,"white");    // Arrivée
+
+
+
+        switch (that.status){
+
+            case "punch":
+                if(that.or == "right"){maxX = that.x+130; minX = that.x+60;}
+                else{maxX = that.x-60; minX = that.x-130;}
+
+                maxY = minY = that.y+40;
+
+                break;
+
+            case "kick":
+                if(that.or == "right"){maxX = that.x+110;minX =that.x+60;}
+                else{maxX = that.x-60;minX =that.x-110;}
+
+                maxY = minY = that.y+30+80;
+                break;
+
+            case "special":
+                if(that.or == "right"){maxX = that.canvas.width;minX = that.x+200;}
+                else{maxX = that.x-118; minX = 0;}
+
+                maxY = minY = that.y+35;
+                break;
+        }
+
+
+
+
+
+
+        //limit body 
+        /*  context.beginPath();
+         context.strokeStyle = 'rgba(255, 0, 255, 0.7)';
+         context.moveTo(minX, minY);
+         context.lineTo(maxX, maxY);
+         */
 
         context.stroke(); // DESSINE
+
+
+
+
+        if(that.or == "right"){
+            for(var i = minX; i<maxX; i++){
+
+                if(that.status == "" || that.isHurting || (that.status == "special" && that.specialload<10 || that.status == "special" && that.specialload>14)){return;}
+
+                colorYmax = context.getImageData(i, maxY+7, 1, 1).data[1];
+
+                //console.log(colorYmax);
+
+
+                if(colorYmax!=0 || that.isHurting){
+
+                    that.isHurting = true;
+
+                    context.beginPath();
+                    context.strokeStyle = 'rgba(255,0,0,0.7)';
+                    context.fillStyle = '#ff0000';
+                    context.lineWidth = 0;
+                    context.arc(i, maxY, 15, 0, Math.PI * 2, true);
+                    context.fill();
+                    context.stroke();
+                    break;
+                }
+            }
+        }
+
+        if(that.or == "left"){
+            for(var i = maxX; i>minX; i--){
+
+                if(that.status == "" || that.isHurting || (that.status == "special" && that.specialload<10 || that.status == "special" && that.specialload>14)){return;}
+
+                colorYmax = context.getImageData(i, maxY+7, 1, 1).data[1];
+
+
+                if(colorYmax!=0 || that.isHurting){
+
+                    that.isHurting = true;
+
+                    context.beginPath();
+                    context.strokeStyle = 'rgba(255,0,0,0.7)';
+                    context.fillStyle = '#ff0000';
+                    context.lineWidth = 0;
+                    context.arc(i, maxY, 15, 0, Math.PI * 2, true);
+                    context.fill();
+                    context.stroke();
+
+                    break;
+                }
+            }
+        }
+
+
 
 
     };

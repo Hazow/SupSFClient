@@ -1,6 +1,6 @@
 myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio) {
 
-    var socket = io.connect("http://37.59.122.17");
+    var socket = io.connect("http://localhost:8080/");
 
     $scope.sound = ngAudio.load("sound/9BH.wav"); // returns NgAudioObject
 
@@ -77,16 +77,18 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
     });
 
     $scope.$on('correctLatency', function(evt, value){
-        console.log(value);
+        //console.log(value);
         socket.emit("correctLatency",{
             opponent : $scope.opponent,
             x:value.x,
             y:value.y,
             status:value.status,
             position:value.position,
+            specialload:value.specialload,
             or:value.or,
             frame:value.frame,
-            life:value.life
+            life:value.life,
+            isHurting : value.isHurting
         });
         $scope.searching=null;
     });
@@ -99,6 +101,8 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
         $scope.opponentFighter.or=value.or;
         $scope.opponentFighter.frame=value.frame;
         $scope.opponentFighter.life=value.life;
+        $scope.opponentFighter.specialload=value.specialload;
+        $scope.opponentFighter.isHurting=value.isHurting;
         $scope.opponentFighter.draw();
         $scope.$apply();
     });
@@ -164,7 +168,7 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
     });
 
     socket.on('responseForFight', function (data) {
-        console.log(data.opponent.pseudo+" a rï¿½pondu a votre demande : "+data.res);
+        console.log(data.opponent.pseudo+" a répondu a votre demande : "+data.res);
         if(data.res){
             $scope.opponent=data.opponent;
             $scope.getAskingForFight=false;
@@ -184,36 +188,20 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
         socket.emit("stopSearchFight",$scope.user);
     };
 
-<<<<<<< HEAD
     socket.on('findFight', function (data) {
         $scope.searching="Fighters found !, You will fight versus "+data.user.pseudo+" !";
         $scope.opponent=data.user;
+        $scope.fighting=true;
         console.log(data.pos);
         $scope.posBase=data.pos;
-=======
-    $scope.sendMsg=function(){
-        $scope.newMsg.sender=$scope.user.pseudo;
-            $http.post('http://37.59.122.17/msg', $scope.newMsg).
-                success(function(data, status, headers, config) {
-                    socket.emit('message',$scope.newMsg);
-                    $scope.newMsg=new Message();
-                }).
-                error(function(data, status, headers, config) {
-                    console.log(data);
-                });
-    };
-
-    socket.on('findFight', function (user) {
-        $scope.searching="Fighters found !, You will fight versus "+user.pseudo+" !";
->>>>>>> c39ed5e73d0bfdcaed571d90c88e03d846b49599
-        $scope.fighting=true;
-        $scope.$apply();
     });
+
 
     socket.on('waitingFight', function () {
         $scope.searching="No fighters found, you are in the waiting list...";
         $scope.$apply();
     });
+
     /**************************************************************** CHAT *********************************************/
     $scope.sendMsg=function(){
         $scope.newMsg.sender=$scope.user.pseudo;

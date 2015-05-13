@@ -1,8 +1,13 @@
 canvas {
     position: absolute;
-
+    background: transparent;
+    z-index:1;
+}
+#backCanvas{
+    position: absolute;
     background-image: url('assets/img/bg-canvas.gif');
     background-repeat: no-repeat;
     -webkit-background-size: cover;
     background-size: cover;
+    z-index:0;
 }
