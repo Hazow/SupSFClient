@@ -5,7 +5,7 @@
         <div style="max-height: 580px;width: 100%;overflow: auto;">
             <table ng-show="leaderBoard" style="width:100%; text-align: center; border-collapse: collapse">
                 <th style="width:1%"></th><th style="width:25%">Pseudo</th><th style="width:25%">Win</th><th style="width:25%">Lose</th><th>W/L</th>
-                <tr ng-repeat="us in users | orderBy:['win/lose','-win','-lose'] | limitTo:5" ng-class="{'imp': user._id == us._id}"  ng-switch="us.lose">
+                <tr ng-repeat="us in users | orderBy:[sortByRatio,'+win']" ng-class="{'imp': user._id == us._id}"  ng-switch="us.lose">
                     <td>{{$index+1}}</td>
                     <td>{{us.pseudo}}</td>
                     <td>{{us.win}}</td>

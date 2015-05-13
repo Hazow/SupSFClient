@@ -384,6 +384,14 @@ myApp.controller('mainCtrl', function ($scope,$http,$rootScope,$location,ngAudio
 
 
     /************************************************************** OTHER ************************************************/
+    $scope.sortByRatio=function(us){
+        //console.log(us.pseudo+" : "+(us.lose/us.win));
+        if(us.lose==0 && us.win==0){
+            return null;
+        }
+        return parseInt(us.lose, 10) / parseInt(us.win, 10);
+    };
+
     socket.on('alreadyOnline', function (user) {
         console.log("alreadyOnline");
         $rootScope.loggedUser=null;
