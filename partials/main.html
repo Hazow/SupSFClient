@@ -1,4 +1,24 @@
 <div style="width: 100%; border-bottom: solid 1px #fcb216;">
+    <div ng-click="unlog()">Unlog</div>
+    <div style="display: inline-block; width: 100%">
+        <h3 class="bordered" style="text-align: center;cursor: pointer;" ng-click="leaderBoard=!leaderBoard">LeaderBoard</h3>
+        <div style="max-height: 580px;width: 100%;overflow: auto;">
+            <table ng-show="leaderBoard" style="width:100%; text-align: center; border-collapse: collapse">
+                <th style="width:1%"></th><th style="width:25%">Pseudo</th><th style="width:25%">Win</th><th style="width:25%">Lose</th><th>W/L</th>
+                <tr ng-repeat="us in users | orderBy:['win/lose','-win','-lose'] | limitTo:5" ng-class="{'imp': user._id == us._id}"  ng-switch="us.lose">
+                    <td>{{$index+1}}</td>
+                    <td>{{us.pseudo}}</td>
+                    <td>{{us.win}}</td>
+                    <td>{{us.lose}}</td>
+                    <td>
+                        <span ng-switch-when="0">{{us.win}}</span>
+                        <span ng-switch-default>{{us.win/us.lose | number:2}}</span>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
     <div style="display: inline-block; width: 60%">
         <h3 style="text-align: center">Chat</h3>
         <div scroll-glue style="height: 580px;width: 100%;overflow: auto;">
@@ -56,14 +76,18 @@
             Your opponent : {{opponent.pseudo}} - {{opponent.win}} Win - {{opponent.lose}} Lose
         </span>
         <hr>
+        <span ng-show="opponent">
+            Me : {{myFighter.life}} - {{opponent.pseudo}} : {{opponentFighter.life}}
+        </span>
         <canvas id="backCanvas" width="1200px" height="590px">
         </canvas>
-            <canvas id="canvasUser" drawing-canvas-user width="1200px" height="590px">
-
-            </canvas>
             <canvas id="canvasOpponent" drawing-canvas-opponent width="1200px" height="590px">
 
             </canvas>
+            <canvas id="canvasUser" drawing-canvas-user width="1200px" height="590px">
+
+            </canvas>
+
 
 
     </div>

@@ -6,7 +6,7 @@ myApp.directive("drawingCanvasOpponent", function(){
             var user = new Fighter(canvas);
             //user.draw();
             //console.log("endDraw");
-            //user.go();
+            user.go();
             scope.$emit('readyCanvasOpponentFighter', user);
         }
     };

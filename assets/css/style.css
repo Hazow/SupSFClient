@@ -23,7 +23,10 @@ h3, h4, label{
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
-
+.bordered{
+    border: solid 1px orange;
+    padding: 10px;
+}
 .error p{
     background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), to(rgba(252, 6, 6, 0.38)));
     -webkit-background-clip: text;

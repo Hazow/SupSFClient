@@ -1,7 +1,9 @@
-myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
+myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope,$localStorage) {
 
     $scope.dataLoading = false;
     $scope.userToLog=new User();
+    $scope.saveMe=false;
+    $scope.$storage = $localStorage;
     /*$scope.userToLog.pseudo="Zow";
     $scope.userToLog.password="zow";*/
 
@@ -27,7 +29,10 @@ myApp.controller('loginCtrl', function ($scope,$location,$http,$rootScope) {
             success(function(data, status, headers, config) {
                 // this refers to the scope
                 if(data!=null && !isEmpty(data)){
-                    $rootScope.loggedUser=new User(data._id,data.pseudo,"",data.win,data.lose,data.fights,data.created);
+                    $rootScope.loggedUser=new User(data._id,data.pseudo,data.password,data.win,data.lose,data.fights,data.created);
+                    if($scope.saveMe){
+                        $scope.$storage.user=$rootScope.loggedUser;
+                    }
                     console.log(data);
                     $location.path('/');
                 }else{
