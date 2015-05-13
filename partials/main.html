@@ -1,9 +1,29 @@
-<div style="width: 100%; border-bottom: solid 1px #fcb216;">
-    <div ng-click="unlog()">Unlog</div>
+<div style="width: 100%;">
+    <span ng-click="unlog()"><h3 style="margin:0;" class="pointer inline-block">Unlog</h3></span> |
+    <span ng-click="leaderBoard=!leaderBoard">
+        <h3 class="inline-block pointer" style="margin:0;">LeaderBoard</h3>
+    </span> |
+    <span ng-if="searching==null" ng-click="quickFight()">
+        <h3 class="pointer inline-block" style="margin:0;">
+            <div class="quick-fight inline-block"></div> Quick Fight
+        </h3>
+    </span>
+    <span ng-bind="searching"></span>
+    <span class="error pointer" ng-if="searching!=null" ng-click="stopSearch()">Stop Search</span>
+    <div ng-if="getAskingForFight">
+        <hr>
+        <div style="width: 100%; text-align: center">
+            {{opponent.pseudo}} want fight against you !
+        </div>
+        <div style="width: 49%;" class="inline-block"><div class="succes pointer" style="width: 100% !important;" ng-click="acceptFight()">Accept</div></div>
+        <div style="width: 49%;" class="inline-block"><div class="error pointer" style="width: 100% !important;" ng-click="declineFight()">Decline</div></div>
+    </div>
+
     <div style="display: inline-block; width: 100%">
-        <h3 class="bordered" style="text-align: center;cursor: pointer;" ng-click="leaderBoard=!leaderBoard">LeaderBoard</h3>
-        <div style="max-height: 580px;width: 100%;overflow: auto;">
-            <table ng-show="leaderBoard" style="width:100%; text-align: center; border-collapse: collapse">
+        <!--<h3 class="bordered" style="text-align: center;cursor: pointer;" ng-click="leaderBoard=!leaderBoard">LeaderBoard</h3>-->
+        <div ng-show="leaderBoard" style="max-height: 580px;width: 100%;overflow: auto;">
+            <hr>
+            <table  style="width:100%; text-align: center; border-collapse: collapse">
                 <th style="width:1%"></th><th style="width:25%">Pseudo</th><th style="width:25%">Win</th><th style="width:25%">Lose</th><th>W/L</th>
                 <tr ng-repeat="us in users | orderBy:[sortByRatio,'+win']" ng-class="{'imp': user._id == us._id}"  ng-switch="us.lose">
                     <td>{{$index+1}}</td>
@@ -16,10 +36,10 @@
                     </td>
                 </tr>
             </table>
-
+            <hr>
         </div>
     </div>
-    <div style="display: inline-block; width: 60%">
+    <div class="dotted" style="display: inline-block; width: 60%">
         <h3 style="text-align: center">Chat</h3>
         <div scroll-glue style="height: 580px;width: 100%;overflow: auto;">
             <div ng-repeat="msg in messages">
@@ -36,60 +56,59 @@
         </div>
     </div>
 
-    <div style="display: inline-block; width: 30%; float: right">
+    <div class="dotted" style="display: inline-block; width: 30%; float: right">
         <h3 style="text-align: center">Online players</h3>
-        <div scroll-glue style="height: 600px; width:100%; overflow: auto;" >
+        <div scroll-glue style="height: 682px; width:100%; overflow: auto;" >
             <div ng-repeat="user in usersOnline">
                 <div style="width: 100%; padding-top: 5px">
-                    <span style="">{{user.pseudo}}</span>
-                    <button style="float: right; width: auto !important; " ng-show="!askingForFight" ng-click="askforFight(user)">Ask for fight</button>
+                    <span style="line-height: 47px">{{user.pseudo}}</span>
+                    <button style="float: right; width: auto !important; " ng-show="!askingForFight" ng-click="askforFight(user)"><div class="quick-fight inline-block"></div> Ask for fight</button>
                 </div>
                 <div style="width: 100%;"><br></div>
             </div>
         </div>
     </div>
-    <hr>
+
 </div>
 
-<div>
+<div ng-if="fighting">
+    <hr>
     <h3 style="text-align: center">Arena</h3>
-    <div ng-if="getAskingForFight">
-        <hr>
-        <div style="width: 100%; text-align: center">
-            {{opponent.pseudo}} want fight against you !
-        </div>
-        <hr>
-        <div style="width: 49%; display: inline-block"><button style="width: 100%" ng-click="acceptFight()">Accept</button></div>
-        <div style="width: 49%; display: inline-block"><button style="width: 100%" ng-click="declineFight()">Decline</button></div>
-        <hr>
-    </div>
-    <span ng-bind="XY"></span>
-        <button ng-if="searching!=null" ng-click="stopSearch()">Stop Search</button>
-        <button ng-if="searching==null" ng-click="quickFight()">Quick Fight</button>
-        <hr>
-        <span ng-bind="searching"></span>
-        <span ng-show="fighting"><button ng-click="quitFight()">Quit fight</button></span>
+    <!--<div ng-if="getAskingForFight">-->
+        <!--<hr>-->
+        <!--<div style="width: 100%; text-align: center">-->
+            <!--{{opponent.pseudo}} want fight against you !-->
+        <!--</div>-->
+        <!--<hr>-->
+
+        <!--<hr>-->
+    <!--</div>-->
+        <!--<button ng-if="searching!=null" ng-click="stopSearch()">Stop Search</button>-->
+        <!--<button ng-if="searching==null" ng-click="quickFight()">Quick Fight</button>-->
+        <!--<span ng-bind="searching"></span>-->
+        <div ng-show="fighting" style="width: 100%"><div ng-click="quitFight()" class="error pointer">Quit fight</div></div>
         <span ng-show="stopFight">Your opponent has quit the fight <button ng-click="stopFight=null">OK</button></span>
     <hr>
-    <div ng-if="fighting" style="height: 600px;width: 600px;">
-        <span ng-show="opponent">
+    <div ng-if="fighting" style="height: 600px;">
+        <span ng-show="opponent" class="pull-left">
             Your opponent : {{opponent.pseudo}} - {{opponent.win}} Win - {{opponent.lose}} Lose
         </span>
-        <hr>
-        <span ng-show="opponent">
+        <span ng-show="opponent" class="pull-right">
             Me : {{myFighter.life}} - {{opponent.pseudo}} : {{opponentFighter.life}}
         </span>
+        <hr>
         <canvas id="backCanvas" width="1200px" height="590px">
         </canvas>
-            <canvas id="canvasOpponent" drawing-canvas-opponent width="1200px" height="590px">
+        <canvas id="canvasOpponent" drawing-canvas-opponent width="1200px" height="590px">
 
-            </canvas>
-            <canvas id="canvasUser" drawing-canvas-user width="1200px" height="590px">
+        </canvas>
+        <canvas id="canvasUser" drawing-canvas-user width="1200px" height="590px">
 
-            </canvas>
+        </canvas>
 
 
 
     </div>
 </div>
+<hr>
 <hr>

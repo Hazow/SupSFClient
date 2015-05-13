@@ -27,7 +27,7 @@ h3, h4, label{
     border: solid 1px orange;
     padding: 10px;
 }
-.error p{
+.error, .error p{
     background: -webkit-gradient(linear, left top, left bottom, from(#ff0000), to(rgba(252, 6, 6, 0.38)));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -35,7 +35,20 @@ h3, h4, label{
     border: solid 1px darkred;
     width: 60%;
     margin: 0 auto;
-    padding: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.succes{
+    background: -webkit-gradient(linear, left top, left bottom, from(#00ff00), to(rgba(74, 178, 67, 0.49)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    border: solid 1px darkgreen;
+    width: 60%;
+    margin: 0 auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 
@@ -104,4 +117,54 @@ footer{
     background: -webkit-gradient(linear, left top, left bottom, from(#f15929), to(#ffd800));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.dotted{
+    border: dotted 3px orange;
+    padding: 10px;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.quick-fight{
+    width: 22px;
+    height: 22px;
+    background-image: url('../img/ico_fighter.png');
+    background-size: cover;
+    -webkit-background-size: cover;
+}
+
+.inline-block{
+    display: inline-block;
+}
+
+.warning{
+    background-color: red !important;
+}
+
+.pull-right{
+    float: right;
+}
+
+.pull-left{
+    float: left;
+}
+
+canvas {
+    position: absolute;
+    background: transparent;
+    z-index:1;
+}
+#backCanvas{
+    position: absolute;
+    background-image: url('../img/bg-canvas.gif');
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    background-size: cover;
+    z-index:0;
+}
+.imp{
+    background: #d57e12;
 }
